@@ -1,0 +1,2318 @@
+
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Delta Rare Exe - Elite Control Panel</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Orbitron:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0a0a0f;
+            --bg-secondary: #14141f;
+            --bg-card: rgba(20, 20, 31, 0.8);
+            --border: rgba(99, 102, 241, 0.3);
+            --border-active: rgba(99, 102, 241, 0.6);
+            --text: #e2e8f0;
+            --text-muted: #94a3b8;
+            --accent: #6366f1;
+            --accent-secondary: #8b5cf6;
+            --accent-glow: rgba(99, 102, 241, 0.4);
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --gradient-1: linear-gradient(135deg, #6366f1, #8b5cf6, #d946ef);
+            --gradient-2: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(139, 92, 246, 0.2));
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text);
+            line-height: 1.6;
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Animated Background */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(99, 102, 241, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(139, 92, 246, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 50% 20%, rgba(217, 70, 239, 0.1) 0%, transparent 50%);
+            animation: backgroundPulse 20s ease-in-out infinite;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        @keyframes backgroundPulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.7; transform: scale(1.1); }
+        }
+
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .particle {
+            position: absolute;
+            background: rgba(99, 102, 241, 0.6);
+            border-radius: 50%;
+            animation: float 20s infinite;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0) translateX(0) rotate(0deg);
+                opacity: 0;
+            }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% {
+                transform: translateY(-100vh) translateX(100px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        .container {
+            position: relative;
+            z-index: 10;
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 12px;
+        }
+
+        /* Header */
+        .header {
+            background: var(--bg-card);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 16px 24px;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 16px;
+            box-shadow: 0 8px 32px rgba(99, 102, 241, 0.2);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 24px;
+            font-weight: 800;
+            background: var(--gradient-1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: 1px;
+            text-shadow: 0 0 30px rgba(99, 102, 241, 0.5);
+        }
+
+        .status-badge {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-size: 13px;
+            font-weight: 600;
+            backdrop-filter: blur(10px);
+            border: 2px solid;
+            transition: all 0.3s ease;
+        }
+
+        .status-badge.online { 
+            background: rgba(16, 185, 129, 0.15); 
+            color: #10b981; 
+            border-color: rgba(16, 185, 129, 0.4); 
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+        }
+        .status-badge.offline { 
+            background: rgba(239, 68, 68, 0.15); 
+            color: #ef4444; 
+            border-color: rgba(239, 68, 68, 0.4); 
+        }
+        .status-badge.checking { 
+            background: rgba(99, 102, 241, 0.15); 
+            color: #6366f1; 
+            border-color: rgba(99, 102, 241, 0.4); 
+        }
+
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        .online .status-dot { background: #10b981; box-shadow: 0 0 10px #10b981; }
+        .offline .status-dot { background: #ef4444; }
+        .checking .status-dot { background: #6366f1; }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.6; transform: scale(0.85); }
+        }
+
+        /* Main Grid */
+        .main-grid {
+            display: grid;
+            grid-template-columns: 400px 1fr;
+            gap: 16px;
+        }
+
+        @media (max-width: 1200px) {
+            .main-grid { grid-template-columns: 1fr; }
+        }
+
+        @media (max-width: 600px) {
+            /* Force all elements to respect viewport width */
+            *, *::before, *::after {
+                max-width: 100%;
+                box-sizing: border-box;
+            }
+            
+            body {
+                overflow-x: hidden;
+                width: 100%;
+            }
+            
+            .container { 
+                padding: 8px;
+                width: 100%;
+                max-width: 100%;
+                overflow-x: hidden;
+            }
+            
+            .header { 
+                padding: 10px 12px;
+                gap: 10px;
+                border-radius: 12px;
+            }
+            
+            .logo h1 { font-size: 14px; }
+            .status-badge { padding: 6px 12px; font-size: 10px; }
+            
+            .main-grid {
+                display: block;
+                width: 100%;
+            }
+            
+            .left-panel, .right-panel {
+                width: 100%;
+                max-width: 100%;
+                margin-bottom: 12px;
+            }
+            
+            .card { 
+                padding: 12px;
+                border-radius: 12px;
+                width: 100%;
+                max-width: 100%;
+            }
+            
+            /* TABS - Critical fix */
+            .tabs-container { 
+                display: flex;
+                padding: 4px;
+                gap: 6px;
+                width: 100%;
+                flex-wrap: nowrap;
+            }
+            
+            .tab-btn { 
+                flex: 1;
+                min-width: 0;
+                padding: 10px 8px;
+                font-size: 11px;
+                gap: 4px;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+            
+            /* OPTIONS - Stack vertically */
+            .options-row {
+                display: flex;
+                flex-direction: column;
+                gap: 8px;
+                width: 100%;
+            }
+            
+            .checkbox-label {
+                width: 100%;
+                justify-content: flex-start;
+                padding: 12px;
+                font-size: 13px;
+            }
+            
+            /* BUTTONS - Single column, full width */
+            .btn-group {
+                display: flex;
+                flex-direction: column;
+                gap: 10px;
+                width: 100%;
+            }
+            
+            .btn {
+                width: 100%;
+                padding: 14px;
+                font-size: 13px;
+            }
+            
+            /* UID Grid - Single column */
+            .uid-grid {
+                display: grid;
+                grid-template-columns: 1fr;
+                gap: 10px;
+                width: 100%;
+            }
+            
+            .uid-box {
+                width: 100%;
+            }
+            
+            .uid-input {
+                width: 100%;
+                padding: 12px;
+                font-size: 13px;
+            }
+            
+            .uid-label {
+                font-size: 11px;
+            }
+            
+            /* Form inputs */
+            .form-group {
+                width: 100%;
+            }
+            
+            .form-group label {
+                font-size: 11px;
+            }
+            
+            .input {
+                width: 100%;
+                padding: 12px;
+                font-size: 13px;
+            }
+            
+            .card-title {
+                font-size: 12px;
+            }
+            
+            /* Emote Panel */
+            .emote-panel {
+                height: auto;
+                max-height: none;
+            }
+            
+            .search-container {
+                padding-bottom: 8px;
+            }
+            
+            .search-box input {
+                padding: 12px 12px 12px 40px;
+                font-size: 13px;
+            }
+            
+            .search-box::before {
+                left: 12px;
+                font-size: 14px;
+            }
+            
+            /* Category tabs - horizontal scroll */
+            .category-tabs {
+                padding: 8px 0;
+                gap: 6px;
+            }
+            
+            .cat-tab {
+                padding: 8px 14px;
+                font-size: 10px;
+            }
+            
+            .emote-count {
+                font-size: 11px;
+                padding: 6px;
+            }
+            
+            /* Category sections */
+            .category-header {
+                padding: 12px;
+            }
+            
+            .category-header h3 {
+                font-size: 12px;
+                gap: 8px;
+            }
+            
+            .category-icon {
+                font-size: 16px;
+            }
+            
+            .category-header .count {
+                font-size: 9px;
+                padding: 4px 8px;
+            }
+            
+            .category-content {
+                padding: 10px 6px;
+            }
+            
+            /* Emote grid */
+            .emotes-grid {
+                grid-template-columns: repeat(auto-fill, minmax(65px, 1fr));
+                gap: 6px;
+                padding: 4px;
+            }
+            
+            .emote-card {
+                width: auto;
+                min-width: 0;
+                padding: 8px;
+            }
+            
+            .emote-card img,
+            .emote-image {
+                width: 40px;
+                height: 40px;
+            }
+            
+            .emote-icon {
+                font-size: 28px;
+            }
+            
+            .emote-name {
+                font-size: 8px;
+            }
+            
+            /* Quick help */
+            .quick-help {
+                padding: 12px;
+                margin-top: 14px;
+            }
+            
+            .quick-help h4 {
+                font-size: 11px;
+            }
+            
+            .quick-help p {
+                font-size: 10px;
+                line-height: 1.6;
+            }
+            
+            /* Selected display */
+            .selected-display {
+                padding: 10px;
+                font-size: 11px;
+            }
+            
+            /* Invite tab */
+            .invite-header {
+                padding: 16px;
+            }
+            
+            .invite-header .icon {
+                font-size: 36px;
+            }
+            
+            .invite-header p {
+                font-size: 12px;
+            }
+            
+            .size-btn {
+                padding: 10px 12px;
+                font-size: 11px;
+            }
+        }
+
+        /* Card */
+        .card {
+            background: var(--bg-card);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            border-color: var(--border-active);
+            box-shadow: 0 12px 40px rgba(99, 102, 241, 0.3);
+        }
+
+        .card-title {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--accent);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Tabs */
+        .tabs-container {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+            background: rgba(10, 10, 15, 0.6);
+            border-radius: 12px;
+            padding: 6px;
+            border: 1px solid var(--border);
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 14px 16px;
+            background: transparent;
+            border: none;
+            border-radius: 10px;
+            color: var(--text-muted);
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .tab-btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(99, 102, 241, 0.2);
+            transform: translate(-50%, -50%);
+            transition: width 0.4s, height 0.4s;
+        }
+
+        .tab-btn:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .tab-btn:hover { 
+            color: var(--text); 
+            background: rgba(99, 102, 241, 0.1);
+        }
+
+        .tab-btn.active {
+            background: var(--gradient-1);
+            color: white;
+            box-shadow: 0 6px 20px var(--accent-glow);
+            transform: translateY(-2px);
+        }
+
+        .tab-content { display: none; }
+        .tab-content.active { display: block; animation: fadeIn 0.3s ease; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Form Elements */
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .input {
+            width: 100%;
+            padding: 12px 16px;
+            background: rgba(10, 10, 20, 0.6);
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            color: var(--text);
+            font-size: 14px;
+            transition: all 0.3s ease;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .input:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 4px var(--accent-glow);
+            background: rgba(10, 10, 20, 0.8);
+        }
+
+        .input::placeholder {
+            color: var(--text-muted);
+            opacity: 0.6;
+        }
+
+        /* UID Grid */
+        .uid-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+
+        .uid-box {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .uid-label {
+            font-size: 11px;
+            color: var(--text-muted);
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .uid-input {
+            padding: 12px;
+            background: rgba(10, 10, 20, 0.6);
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            color: var(--text);
+            font-size: 13px;
+            transition: all 0.3s ease;
+        }
+
+        .uid-input:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px var(--accent-glow);
+        }
+
+        /* Options */
+        .options-row {
+            display: flex;
+            gap: 16px;
+            margin: 16px 0;
+            flex-wrap: wrap;
+        }
+
+        .checkbox-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            cursor: pointer;
+            color: var(--text-muted);
+            padding: 10px 16px;
+            background: rgba(10, 10, 20, 0.4);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .checkbox-label:hover { 
+            color: var(--text); 
+            border-color: var(--accent);
+            background: rgba(99, 102, 241, 0.1);
+        }
+
+        .checkbox-label input {
+            width: 18px;
+            height: 18px;
+            accent-color: var(--accent);
+            cursor: pointer;
+        }
+
+        /* Buttons */
+        .btn-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .btn {
+            padding: 14px 20px;
+            border: none;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .btn:disabled { 
+            opacity: 0.5; 
+            cursor: not-allowed; 
+            transform: none !important;
+        }
+
+        .btn-primary {
+            background: var(--gradient-1);
+            color: white;
+            box-shadow: 0 6px 20px var(--accent-glow);
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 30px var(--accent-glow);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, var(--danger), #dc2626);
+            color: white;
+            box-shadow: 0 6px 20px rgba(239, 68, 68, 0.3);
+        }
+
+        .btn-danger:hover:not(:disabled) { 
+            transform: translateY(-3px); 
+            box-shadow: 0 8px 30px rgba(239, 68, 68, 0.4);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #6b7280, #4b5563);
+            color: white;
+            box-shadow: 0 6px 20px rgba(107, 114, 128, 0.3);
+        }
+
+        .btn-secondary:hover:not(:disabled) { 
+            transform: translateY(-3px); 
+            box-shadow: 0 8px 30px rgba(107, 114, 128, 0.4);
+        }
+
+        /* Status Messages */
+        .status-msg {
+            margin-top: 16px;
+            padding: 14px 18px;
+            border-radius: 12px;
+            font-size: 13px;
+            text-align: center;
+            display: none;
+            font-weight: 500;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .status-msg.success {
+            display: block;
+            background: rgba(16, 185, 129, 0.15);
+            color: #10b981;
+            border: 2px solid rgba(16, 185, 129, 0.4);
+        }
+
+        .status-msg.error {
+            display: block;
+            background: rgba(239, 68, 68, 0.15);
+            color: #ef4444;
+            border: 2px solid rgba(239, 68, 68, 0.4);
+        }
+
+        .status-msg.loading {
+            display: block;
+            background: rgba(99, 102, 241, 0.15);
+            color: #6366f1;
+            border: 2px solid rgba(99, 102, 241, 0.4);
+        }
+
+        /* Quick Help */
+        .quick-help {
+            margin-top: 20px;
+            padding: 16px;
+            background: var(--gradient-2);
+            border-radius: 12px;
+            font-size: 12px;
+            color: var(--text-muted);
+            border: 1px solid var(--border);
+        }
+
+        .quick-help h4 {
+            color: var(--accent);
+            font-size: 12px;
+            margin-bottom: 8px;
+            font-weight: 700;
+        }
+
+        .quick-help p {
+            margin: 4px 0;
+            line-height: 1.8;
+        }
+
+        /* Emote Panel */
+        .emote-panel {
+            display: flex;
+            flex-direction: column;
+            height: calc(100vh - 120px);
+            max-height: 900px;
+        }
+
+        @media (max-width: 1200px) {
+            .emote-panel {
+                height: auto;
+                max-height: 700px;
+            }
+        }
+
+        .search-container {
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            padding-bottom: 12px;
+            background: var(--bg-card);
+            backdrop-filter: blur(20px);
+        }
+
+        .search-box {
+            position: relative;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 14px 18px 14px 50px;
+            background: rgba(10, 10, 20, 0.6);
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            color: var(--text);
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .search-box input:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 4px var(--accent-glow);
+        }
+
+        .search-box::before {
+            content: '🔍';
+            position: absolute;
+            left: 18px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 16px;
+        }
+
+        /* Category Tabs */
+        .category-tabs {
+            display: flex;
+            gap: 8px;
+            padding: 12px 0;
+            overflow-x: auto;
+            scrollbar-width: thin;
+            scrollbar-color: var(--border) transparent;
+        }
+
+        .category-tabs::-webkit-scrollbar { height: 6px; }
+        .category-tabs::-webkit-scrollbar-track { background: transparent; }
+        .category-tabs::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+        .cat-tab {
+            flex-shrink: 0;
+            padding: 10px 18px;
+            background: rgba(10, 10, 20, 0.6);
+            border: 2px solid var(--border);
+            border-radius: 25px;
+            color: var(--text-muted);
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .cat-tab:hover {
+            border-color: var(--accent);
+            color: var(--text);
+            background: rgba(99, 102, 241, 0.1);
+        }
+
+        .cat-tab.active {
+            background: var(--gradient-1);
+            border-color: transparent;
+            color: white;
+            box-shadow: 0 4px 15px var(--accent-glow);
+        }
+
+        .emote-count {
+            font-size: 12px;
+            color: var(--text-muted);
+            text-align: center;
+            padding: 8px;
+            background: rgba(10, 10, 20, 0.4);
+            border-radius: 8px;
+            margin-bottom: 12px;
+            font-weight: 500;
+        }
+
+        /* Emotes Scroll */
+        .emotes-scroll {
+            flex: 1;
+            overflow-y: auto;
+            padding-right: 8px;
+        }
+
+        .emotes-scroll::-webkit-scrollbar { width: 8px; }
+        .emotes-scroll::-webkit-scrollbar-track { background: rgba(10, 10, 20, 0.4); border-radius: 4px; }
+        .emotes-scroll::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+        .emotes-scroll::-webkit-scrollbar-thumb:hover { background: var(--border-active); }
+
+        /* Category Section */
+        .category-section {
+            margin-bottom: 16px;
+            background: rgba(10, 10, 20, 0.3);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .category-section:hover {
+            border-color: var(--border-active);
+            box-shadow: 0 4px 20px rgba(99, 102, 241, 0.15);
+        }
+
+        .category-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 20px;
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(139, 92, 246, 0.1));
+            border-bottom: 1px solid transparent;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .category-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(99, 102, 241, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .category-header:hover::before {
+            left: 100%;
+        }
+
+        .category-header:hover {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.15), rgba(139, 92, 246, 0.15));
+        }
+
+        .category-header:not(.collapsed) {
+            border-bottom-color: var(--border);
+        }
+
+        .category-header h3 {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            position: relative;
+            z-index: 1;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .category-icon {
+            font-size: 20px;
+            filter: drop-shadow(0 2px 4px rgba(99, 102, 241, 0.4));
+        }
+
+        .category-header .count {
+            font-size: 11px;
+            color: var(--accent);
+            background: rgba(99, 102, 241, 0.2);
+            padding: 5px 12px;
+            border-radius: 16px;
+            font-weight: 700;
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            position: relative;
+            z-index: 1;
+        }
+
+        .category-header .toggle-icon {
+            font-size: 18px;
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            color: var(--accent);
+            position: relative;
+            z-index: 1;
+            filter: drop-shadow(0 2px 4px rgba(99, 102, 241, 0.4));
+        }
+
+        .category-header.collapsed .toggle-icon {
+            transform: rotate(-90deg);
+        }
+
+        .category-content {
+            max-height: 3000px;
+            overflow: hidden;
+            transition: max-height 0.5s cubic-bezier(0.4, 0, 0.2, 1), 
+                        opacity 0.3s ease,
+                        padding 0.3s ease;
+            opacity: 1;
+            padding: 16px 12px;
+        }
+
+        .category-content.collapsed {
+            max-height: 0;
+            opacity: 0;
+            padding: 0 12px;
+        }
+
+        /* Emotes Grid */
+        .emotes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+            gap: 10px;
+            padding: 6px;
+        }
+
+        .emote-card {
+            background: rgba(10, 10, 20, 0.6);
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            padding: 12px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            aspect-ratio: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .emote-card::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(99, 102, 241, 0.2);
+            transform: translate(-50%, -50%);
+            transition: width 0.4s, height 0.4s;
+        }
+
+        .emote-card:hover::before {
+            width: 200px;
+            height: 200px;
+        }
+
+        .emote-card:hover {
+            border-color: var(--accent);
+            transform: translateY(-4px) scale(1.05);
+            box-shadow: 0 8px 25px var(--accent-glow);
+        }
+
+        .emote-card.selected {
+            background: var(--gradient-1);
+            border-color: transparent;
+            box-shadow: 0 6px 25px var(--accent-glow);
+            transform: scale(1.05);
+        }
+
+        .emote-card.selected .emote-name {
+            color: white;
+        }
+
+        .emote-image {
+            width: 42px;
+            height: 42px;
+            object-fit: contain;
+            margin-bottom: 6px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .emote-icon {
+            font-size: 28px;
+            margin-bottom: 6px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .emote-name {
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 100%;
+            color: var(--text-muted);
+            position: relative;
+            z-index: 1;
+            letter-spacing: 0.5px;
+        }
+
+        .emote-category {
+            font-size: 7px;
+            font-weight: 600;
+            color: var(--accent);
+            background: rgba(99, 102, 241, 0.15);
+            padding: 2px 6px;
+            border-radius: 8px;
+            margin-top: 4px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 100%;
+            position: relative;
+            z-index: 1;
+            border: 1px solid rgba(99, 102, 241, 0.3);
+        }
+
+        .emote-card.selected .emote-category {
+            color: white;
+            background: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+
+        /* Selected Display */
+        .selected-display {
+            margin-top: 12px;
+            padding: 14px 18px;
+            background: var(--gradient-2);
+            border: 2px solid var(--accent);
+            border-radius: 12px;
+            text-align: center;
+            font-size: 14px;
+            display: none;
+            font-weight: 500;
+        }
+
+        .selected-display.show { 
+            display: block; 
+            animation: slideIn 0.3s ease;
+        }
+
+        .selected-display strong {
+            color: var(--accent);
+            font-weight: 700;
+        }
+
+        /* Size Buttons */
+        .size-btn {
+            flex: 1;
+            padding: 14px;
+            background: rgba(10, 10, 20, 0.6);
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            color: var(--text-muted);
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .size-btn:hover {
+            border-color: var(--accent);
+            color: var(--text);
+            background: rgba(99, 102, 241, 0.1);
+        }
+
+        .size-btn.active {
+            background: var(--gradient-1);
+            border-color: transparent;
+            color: white;
+            box-shadow: 0 4px 15px var(--accent-glow);
+        }
+
+        /* Invite Header */
+        .invite-header {
+            text-align: center;
+            padding: 16px 0;
+        }
+
+        .invite-header .icon {
+            font-size: 40px;
+            margin-bottom: 12px;
+        }
+
+        .invite-header p {
+            font-size: 13px;
+            color: var(--text-muted);
+            line-height: 1.6;
+        }
+
+        /* Spinner */
+        .spinner {
+            width: 18px;
+            height: 18px;
+            border: 3px solid rgba(255,255,255,0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* No Results */
+        .no-results {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-muted);
+        }
+
+        .no-results .icon {
+            font-size: 64px;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+
+        .no-results p {
+            font-size: 14px;
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+    <div class="particles" id="particles"></div>
+    
+    <div class="container">
+        <div class="header">
+            <div class="logo">
+                <h1>🎮 DELTA RARE EXE</h1>
+            </div>
+            <div id="botStatus" class="status-badge checking">
+                <span class="status-dot"></span>
+                <span>Checking Status...</span>
+            </div>
+        </div>
+
+        <div class="main-grid">
+            <div class="left-panel">
+                <div class="card">
+                    <div class="tabs-container">
+                        <button class="tab-btn active" onclick="switchTab('emote')">
+                            🎭 Emote Send
+                        </button>
+                        <button class="tab-btn" onclick="switchTab('invite')">
+                            👥 Group Invite
+                        </button>
+                    </div>
+
+                    <div id="emoteTab" class="tab-content active">
+                        <div class="card-title">🎯 Team Settings</div>
+
+                        <div class="form-group">
+                            <label>Team Code</label>
+                            <input type="text" id="teamcode" class="input" placeholder="Enter team code" maxlength="10">
+                        </div>
+
+                        <div class="card-title">👥 Player UIDs</div>
+
+                        <div class="uid-grid">
+                            <div class="uid-box">
+                                <span class="uid-label">UID 1 (Required)</span>
+                                <input type="text" id="uid1" class="uid-input" placeholder="Enter UID">
+                            </div>
+                            <div class="uid-box">
+                                <span class="uid-label">UID 2</span>
+                                <input type="text" id="uid2" class="uid-input" placeholder="Optional">
+                            </div>
+                            <div class="uid-box">
+                                <span class="uid-label">UID 3</span>
+                                <input type="text" id="uid3" class="uid-input" placeholder="Optional">
+                            </div>
+                            <div class="uid-box">
+                                <span class="uid-label">UID 4</span>
+                                <input type="text" id="uid4" class="uid-input" placeholder="Optional">
+                            </div>
+                            <div class="uid-box">
+                                <span class="uid-label">UID 5</span>
+                                <input type="text" id="uid5" class="uid-input" placeholder="Optional">
+                            </div>
+                            <div class="uid-box">
+                                <span class="uid-label">UID 6</span>
+                                <input type="text" id="uid6" class="uid-input" placeholder="Optional">
+                            </div>
+                        </div>
+
+                        <div class="options-row">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="autoLeave">
+                                <span>Auto Leave</span>
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="instantSend" checked>
+                                <span>⚡ Instant Send</span>
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="fastMode">
+                                <span>🚀 Fast Mode (50x5s)</span>
+                            </label>
+                        </div>
+
+                        <div class="btn-group">
+                            <button class="btn btn-primary" id="sendBtn" onclick="sendEmote()">
+                                📤 Send Emotes
+                            </button>
+                            <button class="btn btn-secondary" onclick="clearSelection()">
+                                🗑️ Clear
+                            </button>
+                            <button class="btn btn-danger" onclick="leaveSquad()">
+                                🚪 Leave
+                            </button>
+                        </div>
+
+                        <div id="status" class="status-msg"></div>
+
+                        <div class="quick-help">
+                            <h4>💡 Quick Tips</h4>
+                            <p>1. Enter team code and at least one UID</p>
+                            <p>2. ⚡ Instant Send: Click emote to send instantly!</p>
+                            <p>3. 🚀 Fast Mode: Sends 50 times every 5 seconds!</p>
+                        </div>
+                    </div>
+
+                    <div id="inviteTab" class="tab-content">
+                        <div class="invite-header">
+                            <div class="icon">📨</div>
+                            <p>Send group invite directly to any player</p>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Player UID</label>
+                            <input type="text" id="inviteUid" class="input" placeholder="Enter player UID">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Group Size</label>
+                            <div style="display: flex; gap: 10px; margin-top: 8px;">
+                                <button type="button" class="size-btn active" data-size="4" onclick="selectGroupSize(4)">
+                                    4 Players
+                                </button>
+                                <button type="button" class="size-btn" data-size="5" onclick="selectGroupSize(5)">
+                                    5 Players
+                                </button>
+                                <button type="button" class="size-btn" data-size="6" onclick="selectGroupSize(6)">
+                                    6 Players
+                                </button>
+                            </div>
+                        </div>
+
+                        <button class="btn btn-primary" id="inviteBtn" onclick="sendGroupInvite()" style="width: 100%; margin-top: 16px;">
+                            📨 Send Group Invite
+                        </button>
+
+                        <div id="inviteStatus" class="status-msg"></div>
+
+                        <div class="quick-help">
+                            <h4>💡 How It Works</h4>
+                            <p>1. Enter target player UID</p>
+                            <p>2. Select group size (4/5/6)</p>
+                            <p>3. Click send to invite!</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="right-panel">
+                <div class="card emote-panel">
+                    <div class="search-container">
+                        <div class="card-title">🎭 Emote Library</div>
+                        <div class="search-box">
+                            <input type="text" id="searchBox" placeholder="Search emotes by name...">
+                        </div>
+                        <div class="category-tabs" id="categoryTabs"></div>
+                        <div class="emote-count" id="emoteCount">Loading emotes...</div>
+                    </div>
+
+                    <div class="emotes-scroll" id="emotesContainer"></div>
+
+                    <div class="selected-display" id="selectedInfo">
+                        Selected: <strong id="selectedText"></strong>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Create particles
+        function createParticles() {
+            const container = document.getElementById('particles');
+            for (let i = 0; i < 50; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.width = Math.random() * 5 + 2 + 'px';
+                particle.style.height = particle.style.width;
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 20 + 's';
+                particle.style.animationDuration = (Math.random() * 10 + 10) + 's';
+                container.appendChild(particle);
+            }
+        }
+        createParticles();
+
+        let selectedEmotes = {};  // Multiple emote selection: {key: data, ...}
+        let activeCategory = 'all';
+        let collapsedCategories = {};
+
+        const emoteMapping = {
+            "Basic Emotes (1-50)": {
+              
+    "hello!": { id: "909000001", icon: "🎭", name: "Hello!", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909000001.png", alt: ["hi", "hey", "wave", "greet", "salam", "hola"] , category: "Basic Emotes (1-50)" },
+    "lol": { id: "909000002", icon: "🎭", name: "LOL", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909000002.png", alt: ["laugh", "haha", "funny", "hehe", "rofl", "lmao"] , category: "Basic Emotes (1-50)" },
+    "provoke": { id: "909000003", icon: "🎭", name: "Provoke", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909000003.png", alt: ["taunt", "tease", "mock", "challenge"] , category: "Basic Emotes (1-50)" },
+    "applause": { id: "909000004", icon: "🎭", name: "Applause", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909000004.png", alt: ["clap", "tali", "bravo", "cheer"] , category: "Basic Emotes (1-50)" },
+    "dab": { id: "909000005", icon: "🎭", name: "Dab", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909000005.png", alt: ["dabbing", "pose"] , category: "Basic Emotes (1-50)" },
+    "chicken": { id: "909000006", icon: "🎭", name: "Chicken", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909000006.png", alt: ["murgi", "murga", "hen", "rooster"] , category: "Basic Emotes (1-50)" },
+    "arm wave": { id: "909000007", icon: "🎭", name: "Arm Wave", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909000007.png", alt: ["wave", "bye", "goodbye", "tata"] , category: "Basic Emotes (1-50)" },
+    "shoot dance": { id: "909000008", icon: "🎭", name: "Shoot Dance", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909000008.png", alt: ["gun", "fire", "bang"] , category: "Basic Emotes (1-50)" },
+    "baby shark": { id: "909000009", icon: "🎭", name: "Baby Shark", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909000009.png", alt: ["shark", "fish", "doo doo", "machh"] , category: "Basic Emotes (1-50)" },
+    "flowers of love": { id: "909000010", icon: "🎭", name: "Flowers of Love", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909000010.png", alt: ["flower", "love", "phool", "valentine", "rose"] , category: "Basic Emotes (1-50)" },
+    "mummy dance": { id: "909000011", icon: "🎭", name: "Mummy Dance", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909000011.png", alt: ["zombie", "halloween", "scary"] , category: "Basic Emotes (1-50)" },
+    "push-up": { id: "909000012", icon: "🎭", name: "Push-up", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909000012.png", alt: ["pushup", "exercise", "gym", "workout", "fitness"] , category: "Basic Emotes (1-50)" },
+    "shuffling": { id: "909000013", icon: "🎭", name: "Shuffling", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909000013.png", alt: ["shuffle", "feet", "dance"] , category: "Basic Emotes (1-50)" },
+    "ffwc throne": { id: "909000014", icon: "🎭", name: "FFWC Throne", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909000014.png", alt: ["king", "chair", "sit", "raja", "world cup"] , category: "Basic Emotes (1-50)" },
+    "dragon fist": { id: "909000015", icon: "🎭", name: "Dragon Fist", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909000015.png", alt: ["punch", "hit", "fight", "mukka"] , category: "Basic Emotes (1-50)" },
+    "dangerous game": { id: "909000016", icon: "🎭", name: "Dangerous Game", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909000016.png", alt: ["danger", "risky", "scary"] , category: "Basic Emotes (1-50)" },
+    "jaguar dance": { id: "909000017", icon: "🎭", name: "Jaguar Dance", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909000017.png", alt: ["cat", "tiger", "bagh"] , category: "Basic Emotes (1-50)" },
+    "threaten": { id: "909000018", icon: "🎭", name: "Threaten", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909000018.png", alt: ["scary", "warning", "angry", "gussa"] , category: "Basic Emotes (1-50)" },
+    "shake with me": { id: "909000019", icon: "🎭", name: "Shake With Me", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909000019.png", alt: ["shake", "dance", "move"] , category: "Basic Emotes (1-50)" },
+    "devil's move": { id: "909000020", icon: "🎭", name: "Devil's Move", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909000020.png", alt: ["devil", "evil", "shaitan", "demon"] , category: "Basic Emotes (1-50)" },
+    "furious slam": { id: "909000021", icon: "🎭", name: "Furious Slam", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909000021.png", alt: ["angry", "punch", "hit", "gussa"] , category: "Basic Emotes (1-50)" },
+    "moon flip": { id: "909000022", icon: "🎭", name: "Moon Flip", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909000022.png", alt: ["flip", "backflip", "acrobat", "jump"] , category: "Basic Emotes (1-50)" },
+    "wiggle walk": { id: "909000023", icon: "🎭", name: "Wiggle walk", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909000023.png", alt: ["walk", "wiggle", "funny walk"] , category: "Basic Emotes (1-50)" },
+    "battle dance": { id: "909000024", icon: "🎭", name: "Battle Dance", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909000024.png", alt: ["fight", "war", "combat"] , category: "Basic Emotes (1-50)" },
+    "high five": { id: "909000025", icon: "🎭", name: "High Five", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909000025.png", alt: ["5", "slap", "celebrate", "friend"] , category: "Basic Emotes (1-50)" },
+    "shake it up": { id: "909000026", icon: "🎭", name: "Shake It Up", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909000026.png", alt: ["shake", "dance", "move"] , category: "Basic Emotes (1-50)" },
+    "glorious spin": { id: "909000027", icon: "🎭", name: "Glorious Spin", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909000027.png", alt: ["spin", "rotate", "turn"] , category: "Basic Emotes (1-50)" },
+    "crane kick": { id: "909000028", icon: "🎭", name: "Crane Kick", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909000028.png", alt: ["karate", "kick", "martial arts", "kung fu"] , category: "Basic Emotes (1-50)" },
+    "party dance": { id: "909000029", icon: "🎭", name: "Party Dance", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909000029.png", alt: ["party", "celebrate", "fun", "enjoy"] , category: "Basic Emotes (1-50)" },
+    "jig dance": { id: "909000031", icon: "🎭", name: "Jig Dance", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909000031.png", alt: ["irish", "dance", "feet"] , category: "Basic Emotes (1-50)" },
+    "selfie": { id: "909000032", icon: "🎭", name: "Selfie", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909000032.png", alt: ["photo", "camera", "picture", "pic"] , category: "Basic Emotes (1-50)" },
+    "soul shaking": { id: "909000033", icon: "🎭", name: "Soul Shaking", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909000033.png", alt: ["shake", "scary", "ghost"] , category: "Basic Emotes (1-50)" },
+    "pirate's flag": { id: "909000034", icon: "🎭", name: "Pirate's Flag", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909000034.png", alt: ["pirate", "flag", "jolly roger", "skull"] , category: "Basic Emotes (1-50)" },
+    "name not found": { id: "909000035", icon: "🎭", name: "Name Not Found", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909000035.png", alt: ["error", "404", "unknown"] , category: "Basic Emotes (1-50)" },
+    "top dj": { id: "909000036", icon: "🎭", name: "Top DJ", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909000036.png", alt: ["dj", "music", "disco", "club"] , category: "Basic Emotes (1-50)" },
+    "death glare": { id: "909000037", icon: "🎭", name: "Death glare", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909000037.png", alt: ["angry", "stare", "look", "gussa"] , category: "Basic Emotes (1-50)" },
+    "power of money": { id: "909000038", icon: "🎭", name: "Power of money", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909000038.png", alt: ["money", "rich", "cash", "taka", "dollar"] , category: "Basic Emotes (1-50)" },
+    "eat my dust": { id: "909000039", icon: "🎭", name: "Eat my dust", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909000039.png", alt: ["fast", "speed", "run", "bye"] , category: "Basic Emotes (1-50)" },
+    "break dance": { id: "909000040", icon: "🎭", name: "Break dance", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909000040.png", alt: ["breakdance", "hiphop", "b-boy", "spin"] , category: "Basic Emotes (1-50)" },
+    "kongfu": { id: "909000041", icon: "🎭", name: "Kongfu", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909000041.png", alt: ["kung fu", "martial arts", "karate", "fight"] , category: "Basic Emotes (1-50)" },
+    "bon appetit": { id: "909000042", icon: "🎭", name: "Bon Appetit", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909000042.png", alt: ["food", "eat", "khabar", "meal"] , category: "Basic Emotes (1-50)" },
+    "aim, fire!": { id: "909000043", icon: "🎭", name: "Aim, fire!", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909000043.png", alt: ["gun", "shoot", "fire", "bang"] , category: "Basic Emotes (1-50)" },
+    "the swan": { id: "909000044", icon: "🎭", name: "The Swan", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909000044.png", alt: ["swan", "bird", "graceful", "ballet"] , category: "Basic Emotes (1-50)" },
+    "i heart you": { id: "909000045", icon: "🎭", name: "I heart you", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909000045.png", alt: ["love", "heart", "valentine", "bhalobashi", "pyar"] , category: "Basic Emotes (1-50)" },
+    "tea time": { id: "909000046", icon: "🎭", name: "Tea Time", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909000046.png", alt: ["tea", "cha", "drink", "cup"] , category: "Basic Emotes (1-50)" },
+    "bring it on!": { id: "909000047", icon: "🎭", name: "Bring It On!", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909000047.png", alt: ["fight", "challenge", "come on", "ready"] , category: "Basic Emotes (1-50)" },
+    "why? oh why?": { id: "909000048", icon: "🎭", name: "Why? Oh Why?", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909000048.png", alt: ["sad", "cry", "why", "question"] , category: "Basic Emotes (1-50)" },
+    "fancy hands": { id: "909000049", icon: "🎭", name: "Fancy Hands", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909000049.png", alt: ["hands", "magic", "fancy"] , category: "Basic Emotes (1-50)" },
+    "shimmy": { id: "909000051", icon: "🎭", name: "Shimmy", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909000051.png", alt: ["shake", "dance", "shoulder"] , category: "Basic Emotes (1-50)" }
+            },
+            "Dance & Action (51-100)": {
+               "doggie": { id: "909000052", icon: "🎭", name: "Doggie", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909000052.png", alt: ["dog", "kukur", "puppy", "pet"] , category: "Dance & Action (51-100)" },
+    "challenge on!": { id: "909000053", icon: "🎭", name: "Challenge On!", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909000053.png", alt: ["fight", "vs", "battle", "challenge"] , category: "Dance & Action (51-100)" },
+    "lasso": { id: "909000054", icon: "🎭", name: "Lasso", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909000054.png" , category: "Dance & Action (51-100)" },
+    "i'm rich!": { id: "909000055", icon: "🎭", name: "I'm Rich!", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909000055.png" , category: "Dance & Action (51-100)" },
+    "make it rain": { id: "909000056", icon: "🎭", name: "Make It Rain", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909000056.png" , category: "Dance & Action (51-100)" },
+    "dust off": { id: "909000057", icon: "🎭", name: "Dust Off", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909000057.png" , category: "Dance & Action (51-100)" },
+    "captain booyah": { id: "909000058", icon: "🎭", name: "Captain Booyah", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909000058.png" , category: "Dance & Action (51-100)" },
+    "let's go!": { id: "909000059", icon: "🎭", name: "Let's Go!", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909000059.png" , category: "Dance & Action (51-100)" },
+    "booyah!": { id: "909000060", icon: "🎭", name: "BOOYAH!", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909000060.png", alt: ["booyah", "yeah", "victory", "win", "celebrate", "jeet"] , category: "Dance & Action (51-100)" },
+    "bhangra": { id: "909000061", icon: "🎭", name: "Bhangra", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909000061.png" , category: "Dance & Action (51-100)" },
+    "piece of cake": { id: "909000062", icon: "🎭", name: "Piece of Cake", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909000062.png" , category: "Dance & Action (51-100)" },
+    "draco's summon": { id: "909000063", icon: "🎭", name: "Draco's Summon", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909000063.png" , category: "Dance & Action (51-100)" },
+    "i'm saitama!": { id: "909000064", icon: "🎭", name: "I'm Saitama!", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909000064.png" , category: "Dance & Action (51-100)" },
+    "the victor": { id: "909000065", icon: "🎭", name: "The Victor", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909000065.png" , category: "Dance & Action (51-100)" },
+    "sii!": { id: "909000066", icon: "🎭", name: "Sii!", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909000066.png" , category: "Dance & Action (51-100)" },
+    "obliteration": { id: "909000067", icon: "🎭", name: "Obliteration", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909000067.png" , category: "Dance & Action (51-100)" },
+    "feeding time": { id: "909000068", icon: "🎭", name: "Feeding Time", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909000068.png" , category: "Dance & Action (51-100)" },
+    "top scorer": { id: "909000069", icon: "🎭", name: "Top Scorer", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909000069.png" , category: "Dance & Action (51-100)" },
+    "triple kicks": { id: "909000070", icon: "🎭", name: "Triple Kicks", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909000070.png" , category: "Dance & Action (51-100)" },
+    "cobra dance": { id: "909000071", icon: "🎭", name: "Cobra Dance", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909000071.png" , category: "Dance & Action (51-100)" },
+    "predator pulse": { id: "909000072", icon: "🎭", name: "Predator Pulse", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909000072.png" , category: "Dance & Action (51-100)" },
+    "ground punch": { id: "909000073", icon: "🎭", name: "Ground Punch", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909000073.png" , category: "Dance & Action (51-100)" },
+    "the biker": { id: "909000074", icon: "🎭", name: "The Biker", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909000074.png" , category: "Dance & Action (51-100)" },
+    "cobra rising": { id: "909000075", icon: "🎭", name: "Cobra Rising", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909000075.png" , category: "Dance & Action (51-100)" },
+    "one-finger pushup": { id: "909000076", icon: "🎭", name: "One-Finger Pushup", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909000076.png" , category: "Dance & Action (51-100)" },
+    "stage time": { id: "909000077", icon: "🎭", name: "Stage Time", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909000077.png" , category: "Dance & Action (51-100)" },
+    "booyah! balloon": { id: "909000078", icon: "🎭", name: "Booyah! Balloon", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909000078.png" , category: "Dance & Action (51-100)" },
+    "more practice": { id: "909000079", icon: "🎭", name: "More Practice", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909000079.png" , category: "Dance & Action (51-100)" },
+    "ffws 2021": { id: "909000080", icon: "🎭", name: "FFWS 2021", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909000080.png" , category: "Dance & Action (51-100)" },
+    "draco's soul": { id: "909000081", icon: "🎭", name: "Draco's Soul", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909000081.png" , category: "Dance & Action (51-100)" },
+    "good game": { id: "909000082", icon: "🎭", name: "Good Game", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909000082.png" , category: "Dance & Action (51-100)" },
+    "greetings": { id: "909000083", icon: "🎭", name: "Greetings", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909000083.png" , category: "Dance & Action (51-100)" },
+    "the walker": { id: "909000084", icon: "🎭", name: "The Walker", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909000084.png" , category: "Dance & Action (51-100)" },
+    "born of light": { id: "909000085", icon: "🎭", name: "Born of Light", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909000085.png" , category: "Dance & Action (51-100)" },
+    "mythos four": { id: "909000086", icon: "🎭", name: "Mythos Four", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909000086.png" , category: "Dance & Action (51-100)" },
+    "champion grab": { id: "909000087", icon: "🎭", name: "Champion Grab", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909000087.png" , category: "Dance & Action (51-100)" },
+    "win and chill": { id: "909000088", icon: "🎭", name: "Win and Chill", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909000088.png" , category: "Dance & Action (51-100)" },
+    "hadouken": { id: "909000089", icon: "🎭", name: "Hadouken", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909000089.png" , category: "Dance & Action (51-100)" },
+    "blood wraith": { id: "909000090", icon: "🎭", name: "Blood Wraith", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909000090.png" , category: "Dance & Action (51-100)" },
+    "big smash": { id: "909000091", icon: "🎭", name: "Big Smash", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909000091.png" , category: "Dance & Action (51-100)" },
+    "fancy steps": { id: "909000092", icon: "🎭", name: "Fancy Steps", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909000092.png" , category: "Dance & Action (51-100)" },
+    "all in control": { id: "909000093", icon: "🎭", name: "All In Control", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909000093.png" , category: "Dance & Action (51-100)" },
+    "debugging": { id: "909000094", icon: "🎭", name: "Debugging", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909000094.png" , category: "Dance & Action (51-100)" },
+    "waggor wave": { id: "909000095", icon: "🎭", name: "Waggor Wave", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909000095.png" , category: "Dance & Action (51-100)" },
+    "crazy guitar": { id: "909000096", icon: "🎭", name: "Crazy Guitar", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909000096.png" , category: "Dance & Action (51-100)" },
+    "poof": { id: "909000097", icon: "🎭", name: "Poof", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909000097.png" , category: "Dance & Action (51-100)" },
+    "the chosen victor": { id: "909000098", icon: "🎭", name: "The Chosen Victor", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909000098.png" , category: "Dance & Action (51-100)" },
+    "challenger": { id: "909000099", icon: "🎭", name: "Challenger", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909000099.png" , category: "Dance & Action (51-100)" },
+    "unknown emote 100": { id: "909000100", icon: "🎭", name: "Unknown Emote 100", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909000100.png" , category: "Dance & Action (51-100)" },
+    "unknown emote 101": { id: "909000101", icon: "🎭", name: "Unknown Emote 101", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909000101.png" , category: "Dance & Action (51-100)" },
+            },
+            "Weapon & Combat (101-150)": {
+               
+    "unknown emote 102": { id: "909000102", icon: "🎭", name: "Unknown Emote 102", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909000102.png" , category: "Weapon & Combat (101-150)" },
+    "unknown emote 103": { id: "909000103", icon: "🎭", name: "Unknown Emote 103", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909000103.png" , category: "Weapon & Combat (101-150)" },
+    "unknown emote 104": { id: "909000104", icon: "🎭", name: "Unknown Emote 104", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909000104.png" , category: "Weapon & Combat (101-150)" },
+    "unknown emote 105": { id: "909000105", icon: "🎭", name: "Unknown Emote 105", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909000105.png" , category: "Weapon & Combat (101-150)" },
+    "unknown emote 106": { id: "909000106", icon: "🎭", name: "Unknown Emote 106", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909000106.png" , category: "Weapon & Combat (101-150)" },
+    "unknown emote 107": { id: "909000107", icon: "🎭", name: "Unknown Emote 107", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909000107.png" , category: "Weapon & Combat (101-150)" },
+    "unknown emote 108": { id: "909000108", icon: "🎭", name: "Unknown Emote 108", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909000108.png" , category: "Weapon & Combat (101-150)" },
+    "unknown emote 109": { id: "909000109", icon: "🎭", name: "Unknown Emote 109", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909000109.png" , category: "Weapon & Combat (101-150)" },
+    "unknown emote 110": { id: "909000110", icon: "🎭", name: "Unknown Emote 110", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909000110.png" , category: "Weapon & Combat (101-150)" },
+    "unknown emote 111": { id: "909000111", icon: "🎭", name: "Unknown Emote 111", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909000111.png" , category: "Weapon & Combat (101-150)" },
+    "unknown emote 112": { id: "909000112", icon: "🎭", name: "Unknown Emote 112", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909000112.png" , category: "Weapon & Combat (101-150)" },
+    "unknown emote 113": { id: "909000113", icon: "🎭", name: "Unknown Emote 113", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909000113.png" , category: "Weapon & Combat (101-150)" },
+    "unknown emote 114": { id: "909000114", icon: "🎭", name: "Unknown Emote 114", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909000114.png" , category: "Weapon & Combat (101-150)" },
+    "unknown emote 115": { id: "909000115", icon: "🎭", name: "Unknown Emote 115", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909000115.png" , category: "Weapon & Combat (101-150)" },
+    "unknown emote 116": { id: "909000116", icon: "🎭", name: "Unknown Emote 116", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909000116.png" , category: "Weapon & Combat (101-150)" },
+    "unknown emote 117": { id: "909000117", icon: "🎭", name: "Unknown Emote 117", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909000117.png" , category: "Weapon & Combat (101-150)" },
+    "unknown emote 118": { id: "909000118", icon: "🎭", name: "Unknown Emote 118", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909000118.png" , category: "Weapon & Combat (101-150)" },
+    "unknown emote 119": { id: "909000119", icon: "🎭", name: "Unknown Emote 119", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909000119.png" , category: "Weapon & Combat (101-150)" },
+    "unknown emote 120": { id: "909000120", icon: "🎭", name: "Unknown Emote 120", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909000120.png" , category: "Weapon & Combat (101-150)" },
+    "dribble king": { id: "909000121", icon: "🎭", name: "Dribble King", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909000121.png" , category: "Weapon & Combat (101-150)" },
+    "unknown emote 122": { id: "909000122", icon: "🎭", name: "Unknown Emote 122", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909000122.png" , category: "Weapon & Combat (101-150)" },
+    "mind it!": { id: "909000123", icon: "🎭", name: "Mind it!", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909000123.png" , category: "Weapon & Combat (101-150)" },
+    "golden combo": { id: "909000124", icon: "🎭", name: "Golden Combo", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909000124.png" , category: "Weapon & Combat (101-150)" },
+    "sick moves": { id: "909000125", icon: "🎭", name: "Sick Moves", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909000125.png" , category: "Weapon & Combat (101-150)" },
+    "rap swag": { id: "909000126", icon: "🎭", name: "Rap Swag", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909000126.png" , category: "Weapon & Combat (101-150)" },
+    "battle in style": { id: "909000127", icon: "🎭", name: "BATTLE IN STYLE", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909000127.png" , category: "Weapon & Combat (101-150)" },
+    "ruler's flag": { id: "909000128", icon: "🎭", name: "Ruler's Flag", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909000128.png" , category: "Weapon & Combat (101-150)" },
+    "money throw": { id: "909000129", icon: "🎭", name: "Money Throw", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909000129.png" , category: "Weapon & Combat (101-150)" },
+    "endless bullets": { id: "909000130", icon: "🎭", name: "Endless Bullets", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909000130.png" , category: "Weapon & Combat (101-150)" },
+    "smooth sway": { id: "909000131", icon: "🎭", name: "Smooth Sway", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909000131.png" , category: "Weapon & Combat (101-150)" },
+    "number 1": { id: "909000132", icon: "🎭", name: "Number 1", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909000132.png" , category: "Weapon & Combat (101-150)" },
+    "fire slam": { id: "909000133", icon: "🎭", name: "Fire Slam", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909000133.png" , category: "Weapon & Combat (101-150)" },
+    "heartbroken": { id: "909000134", icon: "🎭", name: "Heartbroken", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909000134.png" , category: "Weapon & Combat (101-150)" },
+    "rock paper scissors": { id: "909000135", icon: "🎭", name: "Rock Paper Scissors", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909000135.png" , category: "Weapon & Combat (101-150)" },
+    "shattered reality": { id: "909000136", icon: "🎭", name: "Shattered Reality", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909000136.png" , category: "Weapon & Combat (101-150)" },
+    "halo of music": { id: "909000137", icon: "🎭", name: "Halo of Music", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909000137.png" , category: "Weapon & Combat (101-150)" },
+    "burnt bbq": { id: "909000138", icon: "🎭", name: "Burnt BBQ", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909000138.png" , category: "Weapon & Combat (101-150)" },
+    "switching steps": { id: "909000139", icon: "🎭", name: "Switching Steps", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909000139.png" , category: "Weapon & Combat (101-150)" },
+    "creed slay": { id: "909000140", icon: "🎭", name: "Creed Slay", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909000140.png" , category: "Weapon & Combat (101-150)" },
+    "leap of fail": { id: "909000141", icon: "🎭", name: "Leap of Fail", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909000141.png" , category: "Weapon & Combat (101-150)" },
+    "unknown emote 142": { id: "909000142", icon: "🎭", name: "Unknown Emote 142", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909000142.png" , category: "Weapon & Combat (101-150)" },
+    "helicopter shot": { id: "909000143", icon: "🎭", name: "Helicopter Shot", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909000143.png" , category: "Weapon & Combat (101-150)" },
+    "kungfu tigers": { id: "909000144", icon: "🎭", name: "Kungfu Tigers", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909000144.png" , category: "Weapon & Combat (101-150)" },
+    "possessed warrior": { id: "909000145", icon: "🎭", name: "Possessed Warrior", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909000145.png" , category: "Weapon & Combat (101-150)" },
+    "raise your thumb!": { id: "909000150", icon: "🎭", name: "Raise Your Thumb!", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909000150.png" , category: "Weapon & Combat (101-150)" },
+    "fireborn": { id: "909033001", icon: "🎭", name: "Fireborn", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909033001.png" , category: "Weapon & Combat (101-150)" },
+    "golden feather": { id: "909033002", icon: "🎭", name: "Golden Feather", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909033002.png" , category: "Weapon & Combat (101-150)" },
+    "come and dance": { id: "909033003", icon: "🎭", name: "Come and Dance", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909033003.png" , category: "Weapon & Combat (101-150)" },
+    "drop kick": { id: "909033004", icon: "🎭", name: "Drop Kick", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909033004.png" , category: "Weapon & Combat (101-150)" },
+    "sit down!": { id: "909033005", icon: "🎭", name: "Sit Down!", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909033005.png" , category: "Weapon & Combat (101-150)" },
+    "booyah sparks": { id: "909033006", icon: "🎭", name: "BOOYAH Sparks", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909033006.png" , category: "Weapon & Combat (101-150)" },
+    "the ffws dance": { id: "909033007", icon: "🎭", name: "The FFWS Dance", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909033007.png" , category: "Weapon & Combat (101-150)" },
+    "easy peasy": { id: "909033008", icon: "🎭", name: "Easy Peasy", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909033008.png" , category: "Weapon & Combat (101-150)" },
+    "winner throw": { id: "909033009", icon: "🎭", name: "Winner Throw", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909033009.png" , category: "Weapon & Combat (101-150)" },
+    "weight of victory": { id: "909033010", icon: "🎭", name: "Weight of Victory", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909033010.png" , category: "Weapon & Combat (101-150)" },
+    "chronicle of the sword": { id: "909034001", icon: "🎭", name: "Chronicle of the Sword", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909034001.png" , category: "Weapon & Combat (101-150)" },
+    "the collapse": { id: "909034002", icon: "🎭", name: "The Collapse", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909034002.png" , category: "Weapon & Combat (101-150)" },
+    "flaming groove": { id: "909034003", icon: "🎭", name: "Flaming Groove", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909034003.png" , category: "Weapon & Combat (101-150)" },
+    "energetic": { id: "909034004", icon: "🎭", name: "Energetic", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909034004.png" , category: "Weapon & Combat (101-150)" },
+    "ridicule": { id: "909034005", icon: "🎭", name: "Ridicule", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909034005.png" , category: "Weapon & Combat (101-150)" },
+    "tease waggor": { id: "909034006", icon: "🎭", name: "Tease Waggor", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909034006.png" , category: "Weapon & Combat (101-150)" },
+    "great conductor": { id: "909034007", icon: "🎭", name: "Great Conductor", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909034007.png" , category: "Weapon & Combat (101-150)" },
+    "fake death": { id: "909034008", icon: "🎭", name: "Fake Death", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909034008.png", alt: ["dead", "die", "death", "mara", "mrityu", "ko"] , category: "Weapon & Combat (101-150)" },
+    "twerk": { id: "909034009", icon: "🎭", name: "Twerk", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909034009.png", alt: ["butt", "shake", "dance", "booty", "sexy"] , category: "Weapon & Combat (101-150)" },
+    "br-ranked heroic emote": { id: "909034010", icon: "🎭", name: "BR-Ranked Heroic Emote", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909034010.png" , category: "Weapon & Combat (101-150)" },
+    "br-ranked master emote": { id: "909034011", icon: "🎭", name: "BR-Ranked Master Emote", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909034011.png" , category: "Weapon & Combat (101-150)" },
+    "cs-ranked heroic emote": { id: "909034012", icon: "🎭", name: "CS-Ranked Heroic Emote", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909034012.png" , category: "Weapon & Combat (101-150)" },
+    "cs-ranked master emote": { id: "909034013", icon: "🎭", name: "CS-Ranked Master Emote", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909034013.png" , category: "Weapon & Combat (101-150)" },
+    "yes, i do": { id: "909034014", icon: "🎭", name: "Yes, I do", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909034014.png" , category: "Weapon & Combat (101-150)" },
+    "free money!": { id: "909035001", icon: "🎭", name: "Free Money!", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909035001.png" , category: "Weapon & Combat (101-150)" },
+            },
+            "Anime & Collab (151-200)": {
+                "victorious eagle": { id: "909035005", icon: "🎭", name: "Victorious Eagle", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909035005.png" , category: "Anime & Collab (151-200)" },
+    "flying saucer": { id: "909035006", icon: "🎭", name: "Flying Saucer", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909035006.png" , category: "Anime & Collab (151-200)" },
+    "weapon magician": { id: "909035007", icon: "🎭", name: "Weapon Magician", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909035007.png" , category: "Anime & Collab (151-200)" },
+    "bobble dance": { id: "909035008", icon: "🎭", name: "Bobble Dance", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909035008.png" , category: "Anime & Collab (151-200)" },
+    "weight training": { id: "909035009", icon: "🎭", name: "Weight Training", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909035009.png" , category: "Anime & Collab (151-200)" },
+    "beautiful love": { id: "909035010", icon: "🎭", name: "Beautiful Love", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909035010.png" , category: "Anime & Collab (151-200)" },
+    "groove moves": { id: "909035011", icon: "🎭", name: "Groove Moves", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909035011.png" , category: "Anime & Collab (151-200)" },
+    "howler's rage": { id: "909035012", icon: "🎭", name: "Howler's Rage", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909035012.png" , category: "Anime & Collab (151-200)" },
+    "louder please": { id: "909035013", icon: "🎭", name: "Louder Please", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909035013.png" , category: "Anime & Collab (151-200)" },
+    "ninja stand": { id: "909035014", icon: "🎭", name: "Ninja Stand", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909035014.png" , category: "Anime & Collab (151-200)" },
+    "creator in action": { id: "909035015", icon: "🎭", name: "Creator In Action", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909035015.png" , category: "Anime & Collab (151-200)" },
+    "ghost float": { id: "909036001", icon: "🎭", name: "Ghost Float", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909036001.png" , category: "Anime & Collab (151-200)" },
+    "shiba surf": { id: "909036002", icon: "🎭", name: "Shiba Surf", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909036002.png" , category: "Anime & Collab (151-200)" },
+    "waiter walk": { id: "909036003", icon: "🎭", name: "Waiter Walk", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909036003.png" , category: "Anime & Collab (151-200)" },
+    "graffiti cameraman": { id: "909036004", icon: "🎭", name: "Graffiti Cameraman", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909036004.png" , category: "Anime & Collab (151-200)" },
+    "agile boxer": { id: "909036005", icon: "🎭", name: "Agile Boxer", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909036005.png" , category: "Anime & Collab (151-200)" },
+    "sunbathing": { id: "909036006", icon: "🎭", name: "Sunbathing", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909036006.png" , category: "Anime & Collab (151-200)" },
+    "skateboard swag": { id: "909036008", icon: "🎭", name: "Skateboard Swag", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909036008.png" , category: "Anime & Collab (151-200)" },
+    "phantom tamer": { id: "909036009", icon: "🎭", name: "Phantom Tamer", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909036009.png" , category: "Anime & Collab (151-200)" },
+    "the signal": { id: "909036010", icon: "🎭", name: "The Signal", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909036010.png" , category: "Anime & Collab (151-200)" },
+    "eternal descent": { id: "909036011", icon: "🎭", name: "Eternal Descent", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909036011.png" , category: "Anime & Collab (151-200)" },
+    "swaggy dance": { id: "909036012", icon: "🎭", name: "Swaggy Dance", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909036012.png" , category: "Anime & Collab (151-200)" },
+    "admire": { id: "909036014", icon: "🎭", name: "Admire", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909036014.png" , category: "Anime & Collab (151-200)" },
+    "reindeer float": { id: "909037001", icon: "🎭", name: "Reindeer Float", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909037001.png" , category: "Anime & Collab (151-200)" },
+    "bamboo dance": { id: "909037002", icon: "🎭", name: "Bamboo Dance", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909037002.png" , category: "Anime & Collab (151-200)" },
+    "dance of constellation": { id: "909037003", icon: "🎭", name: "Dance of Constellation", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909037003.png" , category: "Anime & Collab (151-200)" },
+    "trophy grab": { id: "909037004", icon: "🎭", name: "Trophy Grab", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909037004.png" , category: "Anime & Collab (151-200)" },
+    "starry hands": { id: "909037005", icon: "🎭", name: "Starry Hands", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909037005.png" , category: "Anime & Collab (151-200)" },
+    "yum": { id: "909037006", icon: "🎭", name: "Yum", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909037006.png" , category: "Anime & Collab (151-200)" },
+    "happy dancing": { id: "909037007", icon: "🎭", name: "Happy Dancing", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909037007.png" , category: "Anime & Collab (151-200)" },
+    "juggle": { id: "909037008", icon: "🎭", name: "Juggle", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909037008.png" , category: "Anime & Collab (151-200)" },
+    "neon sign": { id: "909037009", icon: "🎭", name: "Neon Sign", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909037009.png" , category: "Anime & Collab (151-200)" },
+    "beast tease": { id: "909037010", icon: "🎭", name: "Beast Tease", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909037010.png" , category: "Anime & Collab (151-200)" },
+    "drachen tear": { id: "909037011", icon: "🎭", name: "Drachen Tear", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909037011.png" , category: "Anime & Collab (151-200)" },
+    "clap dance": { id: "909037012", icon: "🎭", name: "Clap Dance", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909037012.png" , category: "Anime & Collab (151-200)" },
+    "the influencer": { id: "909038001", icon: "🎭", name: "The Influencer", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909038001.png" , category: "Anime & Collab (151-200)" },
+    "techno blast": { id: "909038003", icon: "🎭", name: "Techno Blast", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909038003.png" , category: "Anime & Collab (151-200)" },
+    "be my valentine": { id: "909038004", icon: "🎭", name: "Be My Valentine", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909038004.png" , category: "Anime & Collab (151-200)" },
+    "angry walk": { id: "909038005", icon: "🎭", name: "Angry Walk", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909038005.png" , category: "Anime & Collab (151-200)" },
+    "make some noise": { id: "909038006", icon: "🎭", name: "Make Some Noise", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909038006.png" , category: "Anime & Collab (151-200)" },
+    "croco hooray": { id: "909038008", icon: "🎭", name: "Croco Hooray", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909038008.png" , category: "Anime & Collab (151-200)" },
+    "scorpio spin": { id: "909038009", icon: "🎭", name: "Scorpio Spin", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909038009.png" , category: "Anime & Collab (151-200)" },
+    "cinder summon": { id: "909038010", icon: "🎭", name: "Cinder Summon", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909038010.png" , category: "Anime & Collab (151-200)" },
+    "shall we dance?": { id: "909038011", icon: "🎭", name: "Shall We Dance?", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909038011.png" , category: "Anime & Collab (151-200)" },
+    "achiever flip": { id: "909038012", icon: "🎭", name: "Achiever Flip", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909038012.png" , category: "Anime & Collab (151-200)" },
+    "spin master": { id: "909038013", icon: "🎭", name: "Spin Master", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909038013.png" , category: "Anime & Collab (151-200)" },
+    "festival celebration": { id: "909039001", icon: "🎭", name: "Festival Celebration", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909039001.png" , category: "Anime & Collab (151-200)" },
+    "artistic musical dance": { id: "909039002", icon: "🎭", name: "Artistic Musical Dance", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909039002.png" , category: "Anime & Collab (151-200)" },
+    "forward, backward": { id: "909039003", icon: "🎭", name: "Forward, Backward", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909039003.png" , category: "Anime & Collab (151-200)" },
+    "scorpion friend": { id: "909039004", icon: "🎭", name: "Scorpion Friend", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909039004.png" , category: "Anime & Collab (151-200)" },
+    "aching power": { id: "909039005", icon: "🎭", name: "Aching Power", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909039005.png" , category: "Anime & Collab (151-200)" },
+    "earthly force": { id: "909039006", icon: "🎭", name: "Earthly Force", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909039006.png" , category: "Anime & Collab (151-200)" },
+    "grenade magic": { id: "909039007", icon: "🎭", name: "Grenade Magic", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909039007.png" , category: "Anime & Collab (151-200)" },
+    "oh yeah!": { id: "909039008", icon: "🎭", name: "Oh Yeah!", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909039008.png" , category: "Anime & Collab (151-200)" },
+    "grace on wheels": { id: "909039009", icon: "🎭", name: "Grace On Wheels", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909039009.png" , category: "Anime & Collab (151-200)" },
+    "flex": { id: "909039010", icon: "🎭", name: "Flex", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909039010.png", alt: ["muscle", "strong", "gym", "power", "shakti", "bicep"] , category: "Anime & Collab (151-200)" },
+    "crimson doom": { id: "909039011", icon: "🎭", name: "Crimson Doom", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909039011.png" , category: "Anime & Collab (151-200)" },
+    "fire beast tamer": { id: "909039012", icon: "🎭", name: "Fire Beast Tamer", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909039012.png" , category: "Anime & Collab (151-200)" },
+    "crimson tunes": { id: "909039013", icon: "🎭", name: "Crimson Tunes", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909039013.png" , category: "Anime & Collab (151-200)" },
+    "swaggy v-steps": { id: "909039014", icon: "🎭", name: "Swaggy V-Steps", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909039014.png" , category: "Anime & Collab (151-200)" },
+    "the chromatic finish": { id: "909040001", icon: "🎭", name: "The Chromatic Finish", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909040001.png" , category: "Anime & Collab (151-200)" },
+    "smash the feather": { id: "909040002", icon: "🎭", name: "Smash the Feather", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909040002.png" , category: "Anime & Collab (151-200)" },
+    "sonorous steps": { id: "909040003", icon: "🎭", name: "Sonorous Steps", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909040003.png" , category: "Anime & Collab (151-200)" },
+    "fishing for wisdom": { id: "909040004", icon: "🎭", name: "Fishing for Wisdom", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909040004.png" , category: "Anime & Collab (151-200)" },
+    "chromatic pop dance": { id: "909040005", icon: "🎭", name: "Chromatic Pop Dance", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909040005.png" , category: "Anime & Collab (151-200)" },
+    "chroma twist twist": { id: "909040006", icon: "🎭", name: "Chroma Twist Twist", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909040006.png" , category: "Anime & Collab (151-200)" },
+    "birth of justice": { id: "909040008", icon: "🎭", name: "Birth of Justice", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909040008.png" , category: "Anime & Collab (151-200)" },
+    "spider-sense": { id: "909040009", icon: "🎭", name: "Spider-Sense", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909040009.png" , category: "Anime & Collab (151-200)" },
+    "chromasonic shot": { id: "909040010", icon: "🎭", name: "Chromasonic Shot", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909040010.png" , category: "Anime & Collab (151-200)" },
+    "play with thunderbolt": { id: "909040011", icon: "🎭", name: "Play With Thunderbolt", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909040011.png" , category: "Anime & Collab (151-200)" },
+    "6th anniversary celebration": { id: "909040012", icon: "🎭", name: "6th Anniversary Celebration", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909040012.png" , category: "Anime & Collab (151-200)" },
+    "wisdom swing": { id: "909040013", icon: "🎭", name: "Wisdom Swing", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909040013.png" , category: "Anime & Collab (151-200)" },
+    "helicopter shot": { id: "909040014", icon: "🎭", name: "Helicopter Shot", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909040014.png" , category: "Anime & Collab (151-200)" },
+    "thunder breathing first form": { id: "909041001", icon: "🎭", name: "Thunder Breathing First Form", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909041001.png" , category: "Anime & Collab (151-200)" },
+    "water breathing sixth form": { id: "909041002", icon: "🎭", name: "Water Breathing Sixth Form", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909041002.png" , category: "Anime & Collab (151-200)" },
+    "beast breathing fifth fang": { id: "909041003", icon: "🎭", name: "Beast Breathing Fifth Fang", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909041003.png" , category: "Anime & Collab (151-200)" },
+    "flying ink sword": { id: "909041004", icon: "🎭", name: "Flying Ink Sword", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909041004.png" , category: "Anime & Collab (151-200)" },
+    "diz my popblaster": { id: "909041005", icon: "🎭", name: "Diz My Popblaster", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909041005.png" , category: "Anime & Collab (151-200)" },
+    "dance puppet, dance!": { id: "909041006", icon: "🎭", name: "Dance Puppet, Dance!", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909041006.png" , category: "Anime & Collab (151-200)" },
+    "high knees": { id: "909041007", icon: "🎭", name: "High Knees", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909041007.png" , category: "Anime & Collab (151-200)" },
+    "bony fumes": { id: "909041008", icon: "🎭", name: "Bony Fumes", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909041008.png" , category: "Anime & Collab (151-200)" },
+    "feel the electricity": { id: "909041009", icon: "🎭", name: "Feel the Electricity", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909041009.png" , category: "Anime & Collab (151-200)" },
+    "whac-a-cotton": { id: "909041010", icon: "🎭", name: "Whac-A-Cotton", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909041010.png" , category: "Anime & Collab (151-200)" },
+    "honorable mention emote": { id: "909041011", icon: "🎭", name: "Honorable Mention Emote", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909041011.png" , category: "Anime & Collab (151-200)" },
+    "br-ranked grandmaster emote": { id: "909041012", icon: "🎭", name: "BR-Ranked Grandmaster Emote", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909041012.png" , category: "Anime & Collab (151-200)" },
+    "cs-ranked grandmaster emote": { id: "909041013", icon: "🎭", name: "CS-Ranked Grandmaster Emote", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909041013.png" , category: "Anime & Collab (151-200)" },
+    "monster clubbing": { id: "909041014", icon: "🎭", name: "Monster Clubbing", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909041014.png" , category: "Anime & Collab (151-200)" },
+    "basudara dance": { id: "909041015", icon: "🎭", name: "Basudara Dance", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909041015.png" , category: "Anime & Collab (151-200)" },
+    "stir-fry frostfire": { id: "909042001", icon: "🎭", name: "Stir-Fry Frostfire", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909042001.png" , category: "Anime & Collab (151-200)" },
+    "money rain": { id: "909042002", icon: "🎭", name: "Money Rain", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909042002.png" , category: "Anime & Collab (151-200)" },
+    "frostfire's calling": { id: "909042003", icon: "🎭", name: "Frostfire's Calling", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909042003.png" , category: "Anime & Collab (151-200)" },
+    "stomping foot": { id: "909042004", icon: "🎭", name: "Stomping Foot", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909042004.png" , category: "Anime & Collab (151-200)" },
+    "this way": { id: "909042005", icon: "🎭", name: "This Way", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909042005.png" , category: "Anime & Collab (151-200)" },
+    "excellent service": { id: "909042006", icon: "🎭", name: "Excellent Service", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909042006.png" , category: "Anime & Collab (151-200)" },
+    "level 100 emote": { id: "909042007", icon: "🎭", name: "Level 100 Emote", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909042007.png" , category: "Anime & Collab (151-200)" },
+    "ever seen a real tiger?": { id: "909042008", icon: "🎭", name: "Ever Seen a Real Tiger?", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909042008.png" , category: "Anime & Collab (151-200)" },
+    "celebration schuss": { id: "909042009", icon: "🎭", name: "Celebration Schuss", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909042009.png" , category: "Anime & Collab (151-200)" },
+    "dawn voyage emote": { id: "909042011", icon: "🎭", name: "Dawn Voyage Emote", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909042011.png" , category: "Anime & Collab (151-200)" },
+    "lamborghini ride": { id: "909042012", icon: "🎭", name: "Lamborghini Ride", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909042012.png" , category: "Anime & Collab (151-200)" },
+    "hello! frostfire style": { id: "909042013", icon: "🎭", name: "Hello! Frostfire Style", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909042013.png" , category: "Anime & Collab (151-200)" },
+    "hand grooves": { id: "909042016", icon: "🎭", name: "Hand Grooves", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909042016.png" , category: "Anime & Collab (151-200)" },
+    "free fire toiletman": { id: "909042017", icon: "🎭", name: "Free Fire Toiletman", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909042017.png" , category: "Anime & Collab (151-200)" },
+    "kemusan": { id: "909042018", icon: "🎭", name: "Kemusan", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909042018.png" , category: "Anime & Collab (151-200)" },
+    "ribbit rider": { id: "909043001", icon: "🎭", name: "Ribbit Rider", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909043001.png" , category: "Anime & Collab (151-200)" },
+    "inner self mastery": { id: "909043002", icon: "🎭", name: "Inner Self Mastery", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909043002.png" , category: "Anime & Collab (151-200)" },
+    "emperor's treasure machine": { id: "909043003", icon: "🎭", name: "Emperor's Treasure Machine", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909043003.png" , category: "Anime & Collab (151-200)" },
+    "why so chaos?": { id: "909043004", icon: "🎭", name: "Why So Chaos?", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909043004.png" , category: "Anime & Collab (151-200)" },
+    "huge feast": { id: "909043005", icon: "🎭", name: "Huge Feast", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909043005.png" , category: "Anime & Collab (151-200)" },
+    "color burst": { id: "909043006", icon: "🎭", name: "Color Burst", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909043006.png" , category: "Anime & Collab (151-200)" },
+    "dragon swipe": { id: "909043007", icon: "🎭", name: "Dragon Swipe", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909043007.png" , category: "Anime & Collab (151-200)" },
+    "samba": { id: "909043008", icon: "🎭", name: "Samba", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909043008.png" , category: "Anime & Collab (151-200)" },
+    "speed summon": { id: "909043009", icon: "🎭", name: "Speed Summon", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909043009.png" , category: "Anime & Collab (151-200)" },
+    "what a match": { id: "909043010", icon: "🎭", name: "What a Match", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909043010.png" , category: "Anime & Collab (151-200)" },
+    "what a pair": { id: "909043013", icon: "🎭", name: "What a Pair", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909043013.png" , category: "Anime & Collab (151-200)" },
+    "byte mounting": { id: "909044001", icon: "🎭", name: "Byte Mounting", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909044001.png" , category: "Anime & Collab (151-200)" },
+    "the unicyclist": { id: "909044002", icon: "🎭", name: "The Unicyclist", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909044002.png" , category: "Anime & Collab (151-200)" },
+    "basket rafting": { id: "909044003", icon: "🎭", name: "Basket Rafting", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909044003.png" , category: "Anime & Collab (151-200)" },
+    "happy lamb shouldering": { id: "909044004", icon: "🎭", name: "Happy Lamb Shouldering", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909044004.png" , category: "Anime & Collab (151-200)" },
+    "paradox of enlightenment": { id: "909044005", icon: "🎭", name: "Paradox of Enlightenment", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909044005.png" , category: "Anime & Collab (151-200)" },
+    "harmonious paradox": { id: "909044006", icon: "🎭", name: "Harmonious Paradox", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909044006.png" , category: "Anime & Collab (151-200)" },
+    "raise your thumb!": { id: "909044007", icon: "🎭", name: "Raise Your Thumb!", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909044007.png" , category: "Anime & Collab (151-200)" },
+    "clap your hands!": { id: "909044008", icon: "🎭", name: "Clap Your Hands!", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909044008.png" , category: "Anime & Collab (151-200)" },
+    "done deal": { id: "909044009", icon: "🎭", name: "Done Deal", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909044009.png" , category: "Anime & Collab (151-200)" },
+    "starcatcher academy": { id: "909044010", icon: "🎭", name: "Starcatcher Academy", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909044010.png" , category: "Anime & Collab (151-200)" },
+    "little paradox wings": { id: "909044011", icon: "🎭", name: "Little Paradox Wings", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909044011.png" , category: "Anime & Collab (151-200)" },
+    "zombified!": { id: "909044012", icon: "🎭", name: "Zombified!", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909044012.png" , category: "Anime & Collab (151-200)" },
+    "the final paradox": { id: "909044015", icon: "🎭", name: "The Final Paradox", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909044015.png" , category: "Anime & Collab (151-200)" },
+    "honk up!": { id: "909044016", icon: "🎭", name: "Honk Up!", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909044016.png" , category: "Anime & Collab (151-200)" },
+    "arrival of the cyclone": { id: "909045001", icon: "🎭", name: "Arrival of the Cyclone", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909045001.png" , category: "Anime & Collab (151-200)" },
+    "spring rocker": { id: "909045002", icon: "🎭", name: "Spring Rocker", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909045002.png" , category: "Anime & Collab (151-200)" },
+    "giddy up!": { id: "909045003", icon: "🎭", name: "Giddy Up!", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909045003.png" , category: "Anime & Collab (151-200)" },
+    "the goosy dance": { id: "909045004", icon: "🎭", name: "The Goosy Dance", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909045004.png" , category: "Anime & Collab (151-200)" },
+    "captain victor": { id: "909045005", icon: "🎭", name: "Captain Victor", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909045005.png" , category: "Anime & Collab (151-200)" },
+    "you know i'm good": { id: "909045006", icon: "🎭", name: "You Know I'm Good", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909045006.png" , category: "Anime & Collab (151-200)" },
+    "step step": { id: "909045007", icon: "🎭", name: "Step Step", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909045007.png" , category: "Anime & Collab (151-200)" },
+    "super yay": { id: "909045008", icon: "🎭", name: "Super Yay", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909045008.png" , category: "Anime & Collab (151-200)" },
+    "moonwalk": { id: "909045009", icon: "🎭", name: "Moonwalk", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909045009.png", alt: ["michael jackson", "mj", "slide", "backwards", "smooth"] , category: "Anime & Collab (151-200)" },
+    "a flower salute": { id: "909045010", icon: "🎭", name: "A Flower Salute", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909045010.png" , category: "Anime & Collab (151-200)" },
+    "little foxy run": { id: "909045011", icon: "🎭", name: "Little Foxy Run", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909045011.png" , category: "Anime & Collab (151-200)" },
+    "mr. waggor's seesaw": { id: "909045012", icon: "🎭", name: "Mr. Waggor's Seesaw", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909045012.png" , category: "Anime & Collab (151-200)" },
+    "floating meditation": { id: "909045015", icon: "🎭", name: "Floating Meditation", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909045015.png" , category: "Anime & Collab (151-200)" },
+    "naatu naatu": { id: "909045016", icon: "🎭", name: "Naatu Naatu", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909045016.png" , category: "Anime & Collab (151-200)" },
+    "champion's walk": { id: "909045017", icon: "🎭", name: "Champion's Walk", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909045017.png" , category: "Anime & Collab (151-200)" },
+    "aura boarder": { id: "909046001", icon: "🎭", name: "Aura Boarder", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909046001.png" , category: "Anime & Collab (151-200)" },
+    "who's the booyah champ!": { id: "909046002", icon: "🎭", name: "Who's the Booyah Champ!", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909046002.png" , category: "Anime & Collab (151-200)" },
+    "controlled combustion": { id: "909046003", icon: "🎭", name: "Controlled Combustion", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909046003.png" , category: "Anime & Collab (151-200)" },
+    "cheers to victory!": { id: "909046004", icon: "🎭", name: "Cheers to Victory!", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909046004.png" , category: "Anime & Collab (151-200)" },
+    "shoe shining": { id: "909046005", icon: "🎭", name: "Shoe Shining", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909046005.png" , category: "Anime & Collab (151-200)" },
+    "gunspinning": { id: "909046006", icon: "🎭", name: "Gunspinning", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909046006.png" , category: "Anime & Collab (151-200)" },
+    "crowd pleaser": { id: "909046007", icon: "🎭", name: "Crowd Pleaser", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909046007.png" , category: "Anime & Collab (151-200)" },
+    "no sweat": { id: "909046008", icon: "🎭", name: "No Sweat", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909046008.png" , category: "Anime & Collab (151-200)" },
+    "magma quake": { id: "909046009", icon: "🎭", name: "Magma Quake", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909046009.png" , category: "Anime & Collab (151-200)" },
+    "max firepower": { id: "909046010", icon: "🎭", name: "Max Firepower", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909046010.png" , category: "Anime & Collab (151-200)" },
+    "can't touch this": { id: "909046011", icon: "🎭", name: "Can't Touch This", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909046011.png" , category: "Anime & Collab (151-200)" },
+    "firestarter": { id: "909046012", icon: "🎭", name: "Firestarter", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909046012.png" , category: "Anime & Collab (151-200)" },
+    "ffws flag flair": { id: "909046013", icon: "🎭", name: "FFWS Flag Flair", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909046013.png" , category: "Anime & Collab (151-200)" },
+ 
+            },
+            "Holiday & Event (201-250)": {
+                "beat drop": { id: "909046014", icon: "🎭", name: "Beat Drop", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909046014.png" , category: "Holiday & Event (201-250)" },
+    "isagi's spatial awareness": { id: "909046015", icon: "🎭", name: "Isagi's Spatial Awareness", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909046015.png" , category: "Holiday & Event (201-250)" },
+    "nagi's trapping": { id: "909046016", icon: "🎭", name: "Nagi's Trapping", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909046016.png" , category: "Holiday & Event (201-250)" },
+    "soaring up": { id: "909046017", icon: "🎭", name: "Soaring Up", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909046017.png" , category: "Holiday & Event (201-250)" },
+    "i won't bow down": { id: "909047001", icon: "🎭", name: "I Won't Bow Down", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909047001.png" , category: "Holiday & Event (201-250)" },
+    "aurora iridescence": { id: "909047002", icon: "🎭", name: "Aurora Iridescence", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909047002.png" , category: "Holiday & Event (201-250)" },
+    "couch for two": { id: "909047003", icon: "🎭", name: "Couch For Two", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909047003.png" , category: "Holiday & Event (201-250)" },
+    "flutter dash": { id: "909047004", icon: "🎭", name: "Flutter Dash", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909047004.png" , category: "Holiday & Event (201-250)" },
+    "slippery throne": { id: "909047005", icon: "🎭", name: "Slippery Throne", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909047005.png" , category: "Holiday & Event (201-250)" },
+    "acceptance speech": { id: "909047006", icon: "🎭", name: "Acceptance Speech", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909047006.png" , category: "Holiday & Event (201-250)" },
+    "love me, love me not": { id: "909047007", icon: "🎭", name: "Love Me, Love Me Not", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909047007.png" , category: "Holiday & Event (201-250)" },
+    "scissor savvy": { id: "909047008", icon: "🎭", name: "Scissor Savvy", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909047008.png" , category: "Holiday & Event (201-250)" },
+    "the thinker": { id: "909047009", icon: "🎭", name: "The Thinker", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909047009.png" , category: "Holiday & Event (201-250)" },
+    "match countdown": { id: "909047010", icon: "🎭", name: "Match Countdown", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909047010.png" , category: "Holiday & Event (201-250)" },
+    "hip twists": { id: "909047011", icon: "🎭", name: "Hip Twists", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909047011.png" , category: "Holiday & Event (201-250)" },
+    "jkt48 no.1": { id: "909047012", icon: "🎭", name: "JKT48 No.1", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909047012.png" , category: "Holiday & Event (201-250)" },
+    "stormy ascent": { id: "909047013", icon: "🎭", name: "Stormy Ascent", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909047013.png" , category: "Holiday & Event (201-250)" },
+    "rasengan": { id: "909047015", icon: "🎭", name: "Rasengan", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909047015.png", alt: ["naruto", "jutsu", "ninja", "ball", "chakra", "anime"] , category: "Holiday & Event (201-250)" },
+    "a thousand years of death": { id: "909047016", icon: "🎭", name: "A Thousand Years of Death", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909047016.png", alt: ["naruto", "kakashi", "poke", "funny", "anime"] , category: "Holiday & Event (201-250)" },
+    "ninja sign": { id: "909047017", icon: "🎭", name: "Ninja Sign", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909047017.png", alt: ["naruto", "hand sign", "jutsu", "anime"] , category: "Holiday & Event (201-250)" },
+    "ninja run": { id: "909047018", icon: "🎭", name: "Ninja Run", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909047018.png", alt: ["naruto", "run", "fast", "anime", "sasuke"] , category: "Holiday & Event (201-250)" },
+    "clone jutsu": { id: "909047019", icon: "🎭", name: "Clone Jutsu", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909047019.png", alt: ["naruto", "shadow clone", "kage bunshin", "anime"] , category: "Holiday & Event (201-250)" },
+    "to the rescue": { id: "909048001", icon: "🎭", name: "To the Rescue", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909048001.png" , category: "Holiday & Event (201-250)" },
+    "midnight peruse": { id: "909048002", icon: "🎭", name: "Midnight Peruse", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909048002.png" , category: "Holiday & Event (201-250)" },
+    "guitar groove": { id: "909048003", icon: "🎭", name: "Guitar Groove", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909048003.png" , category: "Holiday & Event (201-250)" },
+    "keyboard player": { id: "909048004", icon: "🎭", name: "Keyboard Player", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909048004.png" , category: "Holiday & Event (201-250)" },
+    "on drums": { id: "909048005", icon: "🎭", name: "On Drums", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909048005.png" , category: "Holiday & Event (201-250)" },
+    "chac-chac": { id: "909048006", icon: "🎭", name: "Chac-Chac", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909048006.png" , category: "Holiday & Event (201-250)" },
+    "pillow fight": { id: "909048007", icon: "🎭", name: "Pillow Fight", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909048007.png" , category: "Holiday & Event (201-250)" },
+    "target practice": { id: "909048008", icon: "🎭", name: "Target Practice", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909048008.png" , category: "Holiday & Event (201-250)" },
+    "goofy camel": { id: "909048009", icon: "🎭", name: "Goofy Camel", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909048009.png" , category: "Holiday & Event (201-250)" },
+    "hit a six!": { id: "909048010", icon: "🎭", name: "Hit a Six!", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909048010.png" , category: "Holiday & Event (201-250)" },
+    "flag summon": { id: "909048011", icon: "🎭", name: "Flag Summon", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909048011.png" , category: "Holiday & Event (201-250)" },
+    "swift steps": { id: "909048012", icon: "🎭", name: "Swift Steps", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909048012.png" , category: "Holiday & Event (201-250)" },
+    "carnival funk": { id: "909048013", icon: "🎭", name: "Carnival Funk", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909048013.png" , category: "Holiday & Event (201-250)" },
+    "slurp slurp!": { id: "909048014", icon: "🎭", name: "Slurp slurp!", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909048014.png" , category: "Holiday & Event (201-250)" },
+    "sketching": { id: "909048015", icon: "🎭", name: "Sketching", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909048015.png" , category: "Holiday & Event (201-250)" },
+    "half-time chilling": { id: "909048016", icon: "🎭", name: "Half-Time Chilling", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909048016.png" , category: "Holiday & Event (201-250)" },
+    "throw-in": { id: "909048017", icon: "🎭", name: "Throw-In", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909048017.png" , category: "Holiday & Event (201-250)" },
+    "bailalo rocky": { id: "909048018", icon: "🎭", name: "Bailalo Rocky", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909048018.png" , category: "Holiday & Event (201-250)" },
+    "nailoong time!": { id: "909049001", icon: "🎭", name: "Nailoong Time!", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909049001.png" , category: "Holiday & Event (201-250)" },
+    "hand raise": { id: "909049002", icon: "🎭", name: "Hand Raise", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909049002.png" , category: "Holiday & Event (201-250)" },
+    "kick it up": { id: "909049003", icon: "🎭", name: "Kick It Up", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909049003.png" , category: "Holiday & Event (201-250)" },
+    "slap and twist": { id: "909049004", icon: "🎭", name: "Slap and Twist", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909049004.png" , category: "Holiday & Event (201-250)" },
+    "side wiggle": { id: "909049005", icon: "🎭", name: "Side Wiggle", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909049005.png" , category: "Holiday & Event (201-250)" },
+    "creation days": { id: "909049006", icon: "🎭", name: "Creation Days", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909049006.png" , category: "Holiday & Event (201-250)" },
+    "raining coins": { id: "909049007", icon: "🎭", name: "Raining Coins", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909049007.png" , category: "Holiday & Event (201-250)" },
+    "clap clap hooray": { id: "909049008", icon: "🎭", name: "Clap Clap Hooray", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909049008.png" , category: "Holiday & Event (201-250)" },
+    "infinite loops": { id: "909049009", icon: "🎭", name: "Infinite Loops", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909049009.png" , category: "Holiday & Event (201-250)" },
+    "p90 surfer": { id: "909049010", icon: "🎭", name: "P90 Surfer", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909049010.png" , category: "Holiday & Event (201-250)" },
+    "boxing machine": { id: "909049011", icon: "🎭", name: "Boxing Machine", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909049011.png" , category: "Holiday & Event (201-250)" },
+    "open fire": { id: "909049012", icon: "🎭", name: "Open Fire", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909049012.png" , category: "Holiday & Event (201-250)" },
+    "comic barf": { id: "909049013", icon: "🎭", name: "Comic Barf", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909049013.png" , category: "Holiday & Event (201-250)" },
+    "drive-by": { id: "909049014", icon: "🎭", name: "Drive-By", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909049014.png" , category: "Holiday & Event (201-250)" },
+    "pedal on the metal": { id: "909049015", icon: "🎭", name: "Pedal on the Metal", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909049015.png" , category: "Holiday & Event (201-250)" },
+    "spear spin": { id: "909049016", icon: "🎭", name: "Spear Spin", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909049016.png" , category: "Holiday & Event (201-250)" },
+    "flag wave": { id: "909049017", icon: "🎭", name: "Flag Wave", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909049017.png" , category: "Holiday & Event (201-250)" },
+    "disco dazzle": { id: "909049018", icon: "🎭", name: "Disco Dazzle", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909049018.png" , category: "Holiday & Event (201-250)" },
+    "squat challenge": { id: "909049019", icon: "🎭", name: "Squat Challenge", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909049019.png" , category: "Holiday & Event (201-250)" },
+    "winning goal": { id: "909049020", icon: "🎭", name: "Winning Goal", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909049020.png" , category: "Holiday & Event (201-250)" },
+    "head high": { id: "909049021", icon: "🎭", name: "Head High", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909049021.png" , category: "Holiday & Event (201-250)" },
+    "reanimation jutsu": { id: "909050002", icon: "🎭", name: "Reanimation Jutsu", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909050002.png" , category: "Holiday & Event (201-250)" },
+    "the final battle": { id: "909050003", icon: "🎭", name: "The Final Battle", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909050003.png" , category: "Holiday & Event (201-250)" },
+    "forehead poke": { id: "909050004", icon: "🎭", name: "Forehead Poke", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909050004.png" , category: "Holiday & Event (201-250)" },
+    "fire style: fireball jutsu": { id: "909050005", icon: "🎭", name: "Fire Style: Fireball Jutsu", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909050005.png" , category: "Holiday & Event (201-250)" },
+    "flying raijin jutsu": { id: "909050006", icon: "🎭", name: "Flying Raijin Jutsu", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909050006.png" , category: "Holiday & Event (201-250)" },
+    "hammer slam": { id: "909050008", icon: "🎭", name: "Hammer Slam", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909050008.png" , category: "Holiday & Event (201-250)" },
+    "the rings": { id: "909050009", icon: "🎭", name: "The Rings", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909050009.png" , category: "Holiday & Event (201-250)" },
+    "drum twirl": { id: "909050010", icon: "🎭", name: "Drum Twirl", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909050010.png" , category: "Holiday & Event (201-250)" },
+    "bunny action": { id: "909050011", icon: "🎭", name: "Bunny Action", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909050011.png" , category: "Holiday & Event (201-250)" },
+    "broom swoosh": { id: "909050012", icon: "🎭", name: "Broom Swoosh", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909050012.png" , category: "Holiday & Event (201-250)" },
+    "blade from heart": { id: "909050013", icon: "🎭", name: "Blade from Heart", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909050013.png" , category: "Holiday & Event (201-250)" },
+    "map read": { id: "909050014", icon: "🎭", name: "Map Read", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909050014.png" , category: "Holiday & Event (201-250)" },
+
+            },
+            "Premium (251-300)": {
+                "tomato smash": { id: "909050015", icon: "🎭", name: "Tomato Smash", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909050015.png" , category: "Premium (251-300)" },
+    "tactical moveout": { id: "909050016", icon: "🎭", name: "Tactical Moveout", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909050016.png" , category: "Premium (251-300)" },
+    "bunny wiggle": { id: "909050017", icon: "🎭", name: "Bunny Wiggle", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909050017.png" , category: "Premium (251-300)" },
+    "flaming heart": { id: "909050018", icon: "🎭", name: "Flaming Heart", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909050018.png" , category: "Premium (251-300)" },
+    "rain or shine": { id: "909050019", icon: "🎭", name: "Rain or Shine", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909050019.png" , category: "Premium (251-300)" },
+    "sholay": { id: "909050020", icon: "🎭", name: "Sholay", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909050020.png" , category: "Premium (251-300)" },
+    "peak points": { id: "909050021", icon: "🎭", name: "Peak Points", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909050021.png" , category: "Premium (251-300)" },
+    "aura farming": { id: "909050026", icon: "🎭", name: "Aura Farming", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909050026.png" , category: "Premium (251-300)" },
+    "boat race aura": { id: "909050027", icon: "🎭", name: "Boat Race Aura", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909050027.png" , category: "Premium (251-300)" },
+    "boat race rowing": { id: "909050028", icon: "🎭", name: "Boat Race Rowing", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909050028.png" , category: "Premium (251-300)" },
+    "marching": { id: "909050029", icon: "🎭", name: "Marching", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909050029.png" , category: "Premium (251-300)" },
+    "low rider": { id: "909050030", icon: "🎭", name: "Low Rider", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909050030.png" , category: "Premium (251-300)" },
+    "prismatic flight": { id: "909051001", icon: "🎭", name: "Prismatic Flight", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909051001.png" , category: "Premium (251-300)" },
+    "gather around": { id: "909051002", icon: "🎭", name: "Gather Around", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909051002.png" , category: "Premium (251-300)" },
+    "rain of spikes": { id: "909051003", icon: "🎭", name: "Rain of Spikes", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909051003.png" , category: "Premium (251-300)" },
+    "shower time": { id: "909051004", icon: "🎭", name: "Shower Time", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909051004.png" , category: "Premium (251-300)" },
+    "boss energy": { id: "909051005", icon: "🎭", name: "Boss Energy", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909051005.png" , category: "Premium (251-300)" },
+    "double holster": { id: "909051006", icon: "🎭", name: "Double Holster", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909051006.png" , category: "Premium (251-300)" },
+    "finger guns": { id: "909051007", icon: "🎭", name: "Finger Guns", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909051007.png" , category: "Premium (251-300)" },
+    "shivering": { id: "909051008", icon: "🎭", name: "Shivering", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909051008.png" , category: "Premium (251-300)" },
+    "triple shush": { id: "909051009", icon: "🎭", name: "Triple Shush", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909051009.png" , category: "Premium (251-300)" },
+    "on motorbike": { id: "909051010", icon: "🎭", name: "On Motorbike", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909051010.png" , category: "Premium (251-300)" },
+    "twisted stare": { id: "909051011", icon: "🎭", name: "Twisted Stare", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909051011.png" , category: "Premium (251-300)" },
+    "celestial shot": { id: "909051012", icon: "🎭", name: "Celestial Shot", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909051012.png" , category: "Premium (251-300)" },
+    "red petals": { id: "909051013", icon: "🎭", name: "Red Petals", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909051013.png" , category: "Premium (251-300)" },
+    "puffer ride": { id: "909051014", icon: "🎭", name: "Puffer Ride", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909051014.png" , category: "Premium (251-300)" },
+    "can't stop laughing": { id: "909051015", icon: "🎭", name: "Can't Stop Laughing", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909051015.png" , category: "Premium (251-300)" },
+    "crowned glory emote": { id: "909051016", icon: "🎭", name: "Crowned Glory Emote", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909051016.png" , category: "Premium (251-300)" },
+    "choppy co-op": { id: "909051017", icon: "🎭", name: "Choppy Co-op", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909051017.png" , category: "Premium (251-300)" },
+
+            },
+            "Extra Rare (301+)": {
+                "gather around 2": { id: "909051018", icon: "🎭", name: "Gather Around 2", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909051018.png" , category: "Extra Rare (301+)" },
+    "gather around 3": { id: "909051019", icon: "🎭", name: "Gather Around 3", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909051019.png" , category: "Extra Rare (301+)" },
+    "gather around 4": { id: "909051020", icon: "🎭", name: "Gather Around 4", img: "https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909051020.png" , category: "Extra Rare (301+)" }
+            }
+        };
+
+        function renderCategoryTabs() {
+            const container = document.getElementById('categoryTabs');
+            container.innerHTML = '';
+            
+            // Create "All" tab with onclick handler
+            const allTab = document.createElement('button');
+            allTab.className = 'cat-tab active';
+            allTab.dataset.cat = 'all';
+            allTab.textContent = 'All';
+            allTab.onclick = () => filterByCategory('all');
+            container.appendChild(allTab);
+            
+            for (const category of Object.keys(emoteMapping)) {
+                const tab = document.createElement('button');
+                tab.className = 'cat-tab';
+                tab.dataset.cat = category;
+                tab.textContent = category.split(' ')[0];
+                tab.onclick = () => filterByCategory(category);
+                container.appendChild(tab);
+            }
+        }
+
+        function filterByCategory(category) {
+            activeCategory = category;
+            document.querySelectorAll('.cat-tab').forEach(tab => {
+                tab.classList.toggle('active', tab.dataset.cat === category);
+            });
+            renderEmotes(document.getElementById('searchBox').value);
+        }
+
+        function toggleCategory(category) {
+            collapsedCategories[category] = !collapsedCategories[category];
+            const header = document.querySelector(`[data-category="${category}"]`);
+            const content = header.nextElementSibling;
+            
+            if (collapsedCategories[category]) {
+                header.classList.add('collapsed');
+                content.classList.add('collapsed');
+            } else {
+                header.classList.remove('collapsed');
+                content.classList.remove('collapsed');
+            }
+        }
+
+        // Category icons mapping
+        const categoryIcons = {
+            "Level & Max": "💯",
+            "Weapon Emotes": "🔫",
+            "Basic Emotes": "👋",
+            "Dance Emotes": "💃",
+            "Action Emotes": "💪",
+            "Special Emotes": "✨",
+            "Holiday & Event": "🎃",
+            "Naruto Collab": "🥷",
+            "Premium Emotes": "👑",
+            "Extra Rare": "💎"
+        };
+
+        function renderEmotes(filter = '') {
+            const container = document.getElementById('emotesContainer');
+            container.innerHTML = '';
+            
+            let totalShown = 0;
+            let categories = activeCategory === 'all' ? Object.keys(emoteMapping) : [activeCategory];
+
+            for (const category of categories) {
+                if (!emoteMapping[category]) continue;
+                
+                const emotes = Object.entries(emoteMapping[category]);
+                const filteredEmotes = emotes.filter(([key, data]) => {
+                    const filterLower = filter.toLowerCase();
+                    // Check main key and name
+                    if (key.toLowerCase().includes(filterLower) ||
+                        data.name.toLowerCase().includes(filterLower)) {
+                        return true;
+                    }
+                    // Check alt names if they exist
+                    if (data.alt && Array.isArray(data.alt)) {
+                        return data.alt.some(altName => 
+                            altName.toLowerCase().includes(filterLower)
+                        );
+                    }
+                    return false;
+                });
+
+                if (filteredEmotes.length === 0) continue;
+                totalShown += filteredEmotes.length;
+
+                const section = document.createElement('div');
+                section.className = 'category-section';
+
+                const isCollapsed = collapsedCategories[category];
+                const categoryIcon = categoryIcons[category] || '📁';
+                
+                section.innerHTML = `
+                    <div class="category-header ${isCollapsed ? 'collapsed' : ''}" data-category="${category}" onclick="toggleCategory('${category}')">
+                        <h3>
+                            <span class="category-icon">${categoryIcon}</span>
+                            ${category}
+                        </h3>
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            <span class="count">${filteredEmotes.length} emotes</span>
+                            <span class="toggle-icon">▼</span>
+                        </div>
+                    </div>
+                    <div class="category-content ${isCollapsed ? 'collapsed' : ''}">
+                        <div class="emotes-grid"></div>
+                    </div>
+                `;
+
+                const grid = section.querySelector('.emotes-grid');
+
+                // Get short category name (first word only)
+                const shortCategory = category.split(' ')[0];
+
+                for (const [key, data] of filteredEmotes) {
+                    const card = document.createElement('div');
+                    card.className = 'emote-card' + (selectedEmotes[key] ? ' selected' : '');
+
+                    const displayContent = data.img 
+                        ? `<img src="${data.img}" class="emote-image" loading="lazy" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';" /><div class="emote-icon" style="display:none;">${data.icon}</div>`
+                        : `<div class="emote-icon">${data.icon}</div>`;
+
+                    card.innerHTML = `${displayContent}<div class="emote-name">${key}</div><div class="emote-category">${shortCategory}</div>`;
+                    card.onclick = () => selectEmote(key, data, card);
+                    grid.appendChild(card);
+                }
+
+                container.appendChild(section);
+            }
+
+            if (totalShown === 0) {
+                container.innerHTML = `
+                    <div class="no-results">
+                        <div class="icon">🔍</div>
+                        <p>No emotes found for "${filter}"</p>
+                    </div>
+                `;
+            }
+
+            document.getElementById('emoteCount').textContent = `${totalShown} emotes available`;
+        }
+
+        function selectEmote(key, data, cardEl) {
+            // Clear previous selection - only allow ONE emote
+            selectedEmotes = {};
+            document.querySelectorAll('.emote-card').forEach(c => c.classList.remove('selected'));
+            
+            // Select this emote
+            selectedEmotes[key] = data;
+            cardEl.classList.add('selected');
+            updateSelectedDisplay();
+            
+            // Check if instant send is enabled
+            const instantSend = document.getElementById('instantSend')?.checked;
+            if (instantSend) {
+                // Send immediately after selection
+                setTimeout(() => sendEmote(), 100);
+            }
+        }
+
+        function updateSelectedDisplay() {
+            const count = Object.keys(selectedEmotes).length;
+            const infoEl = document.getElementById('selectedInfo');
+            const textEl = document.getElementById('selectedText');
+            
+            if (count > 0) {
+                infoEl.classList.add('show');
+                const names = Object.entries(selectedEmotes).map(([k, d]) => `${d.icon} ${d.name}`).slice(0, 3);
+                let displayText = names.join(', ');
+                if (count > 3) displayText += ` +${count - 3} more`;
+                textEl.textContent = `${count} selected: ${displayText}`;
+            } else {
+                infoEl.classList.remove('show');
+                textEl.textContent = '';
+            }
+        }
+
+        function clearSelection() {
+            selectedEmotes = {};
+            document.querySelectorAll('.emote-card').forEach(c => c.classList.remove('selected'));
+            updateSelectedDisplay();
+        }
+
+        function getUIDs() {
+            const uids = [];
+            for (let i = 1; i <= 6; i++) {
+                const val = document.getElementById('uid' + i).value.trim();
+                if (val && val.length >= 7) uids.push(val);
+            }
+            return uids;
+        }
+
+        async function sendEmote() {
+            const teamcode = document.getElementById('teamcode').value.trim();
+            const uids = getUIDs();
+            const autoLeave = document.getElementById('autoLeave').checked;
+            const fastMode = document.getElementById('fastMode').checked;
+            const btn = document.getElementById('sendBtn');
+            const emoteKeys = Object.keys(selectedEmotes);
+
+            if (!teamcode) {
+                showStatus('error', '❌ Team code required!');
+                return;
+            }
+
+            if (uids.length === 0) {
+                showStatus('error', '❌ At least 1 UID required!');
+                return;
+            }
+
+            if (emoteKeys.length === 0) {
+                showStatus('error', '❌ Select 1 emote!');
+                return;
+            }
+
+            if (emoteKeys.length > 1) {
+                showStatus('error', '❌ Select only ONE emote!');
+                return;
+            }
+
+            btn.disabled = true;
+
+            if (fastMode) {
+                // Fast Mode: 50 times, 5 second interval
+                const repeatCount = 50;
+                const repeatInterval = 5;
+
+                btn.innerHTML = '<div class="spinner"></div>';
+                showStatus('loading', `🚀 Fast Mode: Sending 50 times (5s interval)...`);
+
+                let successCount = 0;
+                for (let i = 0; i < repeatCount; i++) {
+                    try {
+                        const res = await fetch('/send_emote', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                teamcode: teamcode,
+                                uids: uids,
+                                emotes: emoteKeys,
+                                auto_leave: false  // Don't leave during repeat
+                            })
+                        });
+
+                        const data = await res.json();
+                        if (data.success) {
+                            successCount++;
+                            showStatus('loading', `🚀 Sent ${successCount}/${repeatCount} (Next in 5s)...`);
+                        }
+
+                        // Wait 5 seconds before next send (except on last iteration)
+                        if (i < repeatCount - 1) {
+                            await new Promise(resolve => setTimeout(resolve, repeatInterval * 1000));
+                        }
+                    } catch (e) {
+                        console.error('Send error:', e);
+                    }
+                }
+
+                // Auto leave after all repeats if enabled
+                if (autoLeave) {
+                    await new Promise(resolve => setTimeout(resolve, 500));
+                    try {
+                        await fetch('/leave_squad', { method: 'POST' });
+                    } catch (e) {
+                        console.error('Leave error:', e);
+                    }
+                }
+
+                showStatus('success', `✅ Fast Mode Complete! Sent ${successCount}/50 times (5s interval)`);
+                clearSelection();
+            } else {
+                // Normal single send
+                btn.innerHTML = '<div class="spinner"></div>';
+                showStatus('loading', `⏳ Sending emote...`);
+
+                try {
+                    const res = await fetch('/send_emote', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            teamcode: teamcode,
+                            uids: uids,
+                            emotes: emoteKeys,
+                            auto_leave: autoLeave
+                        })
+                    });
+
+                    const data = await res.json();
+                    if (data.success) {
+                        showStatus('success', '✅ ' + data.message);
+                        clearSelection();
+                    } else {
+                        showStatus('error', '❌ ' + data.message);
+                    }
+                } catch (e) {
+                    showStatus('error', '❌ Connection error');
+                }
+            }
+
+            btn.disabled = false;
+            btn.innerHTML = '📤 Send Emotes';
+        }
+
+        async function leaveSquad() {
+            showStatus('loading', '⏳ Leaving squad...');
+
+            try {
+                const res = await fetch('/leave_squad', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+
+                const data = await res.json();
+                if (data.success) {
+                    showStatus('success', '✅ Left squad!');
+                } else {
+                    showStatus('error', '❌ ' + data.message);
+                }
+            } catch (e) {
+                showStatus('error', '❌ Error leaving squad');
+            }
+        }
+
+        function showStatus(type, msg) {
+            const el = document.getElementById('status');
+            el.className = 'status-msg ' + type;
+            el.textContent = msg;
+
+            if (type !== 'loading') {
+                setTimeout(() => { el.className = 'status-msg'; }, 4000);
+            }
+        }
+
+        async function checkBotStatus() {
+            const el = document.getElementById('botStatus');
+            try {
+                const res = await fetch('/bot_status');
+                const data = await res.json();
+                if (data.online) {
+                    el.className = 'status-badge online';
+                    el.innerHTML = '<span class="status-dot"></span><span>Online</span>';
+                } else {
+                    el.className = 'status-badge offline';
+                    el.innerHTML = '<span class="status-dot"></span><span>Offline</span>';
+                }
+            } catch {
+                el.className = 'status-badge offline';
+                el.innerHTML = '<span class="status-dot"></span><span>Offline</span>';
+            }
+        }
+
+        document.getElementById('searchBox').addEventListener('input', (e) => {
+            renderEmotes(e.target.value);
+        });
+
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+
+            if (tabName === 'emote') {
+                document.querySelector('.tab-btn:first-child').classList.add('active');
+                document.getElementById('emoteTab').classList.add('active');
+            } else {
+                document.querySelector('.tab-btn:last-child').classList.add('active');
+                document.getElementById('inviteTab').classList.add('active');
+            }
+        }
+
+        let selectedGroupSize = 4;
+
+        function selectGroupSize(size) {
+            selectedGroupSize = size;
+            document.querySelectorAll('.size-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if (parseInt(btn.dataset.size) === size) {
+                    btn.classList.add('active');
+                }
+            });
+        }
+
+        function showInviteStatus(type, msg) {
+            const el = document.getElementById('inviteStatus');
+            el.className = 'status-msg ' + type;
+            el.textContent = msg;
+
+            if (type !== 'loading') {
+                setTimeout(() => { el.className = 'status-msg'; }, 4000);
+            }
+        }
+
+        async function sendGroupInvite() {
+            const uid = document.getElementById('inviteUid').value.trim();
+            const btn = document.getElementById('inviteBtn');
+
+            if (!uid) {
+                showInviteStatus('error', '❌ UID required!');
+                return;
+            }
+
+            if (uid.length < 7) {
+                showInviteStatus('error', '❌ Invalid UID!');
+                return;
+            }
+
+            btn.disabled = true;
+            btn.innerHTML = '<div class="spinner"></div>';
+            showInviteStatus('loading', `⏳ Sending ${selectedGroupSize}-player invite...`);
+
+            try {
+                const res = await fetch('/send_group_invite', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        uid: uid,
+                        group_size: selectedGroupSize
+                    })
+                });
+
+                const data = await res.json();
+                if (data.success) {
+                    showInviteStatus('success', '✅ ' + data.message);
+                } else {
+                    showInviteStatus('error', '❌ ' + data.message);
+                }
+            } catch (e) {
+                showInviteStatus('error', '❌ Connection error');
+            }
+
+            btn.disabled = false;
+            btn.innerHTML = '📨 Send Group Invite';
+        }
+
+        renderCategoryTabs();
+        renderEmotes();
+        checkBotStatus();
+        setInterval(checkBotStatus, 10000);
+    </script>
+</body>
+</html>

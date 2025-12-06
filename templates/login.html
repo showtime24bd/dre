@@ -1,0 +1,845 @@
+
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔐 Delta Rare Exe - Advanced Login</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Poppins:wght@300;400;500;600;700&display=swap');
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #0a0a0f 0%, #1a1a2e 50%, #16213e 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #e2e8f0;
+            overflow-x: hidden;
+            position: relative;
+        }
+        
+        /* Animated Background */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(99, 102, 241, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(139, 92, 246, 0.15) 0%, transparent 50%);
+            animation: backgroundPulse 15s ease-in-out infinite;
+            z-index: 0;
+        }
+        
+        @keyframes backgroundPulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 0;
+        }
+        
+        .particle {
+            position: absolute;
+            background: rgba(99, 102, 241, 0.6);
+            border-radius: 50%;
+            animation: float 20s infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0) translateX(0) rotate(0deg);
+                opacity: 0;
+            }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% {
+                transform: translateY(-100vh) translateX(100px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+        
+        .login-container {
+            position: relative;
+            z-index: 10;
+            background: rgba(15, 15, 30, 0.85);
+            border: 2px solid rgba(99, 102, 241, 0.4);
+            border-radius: 20px;
+            padding: 45px 40px;
+            width: 100%;
+            max-width: 450px;
+            backdrop-filter: blur(20px);
+            box-shadow: 
+                0 8px 32px 0 rgba(99, 102, 241, 0.2),
+                0 0 100px rgba(99, 102, 241, 0.1);
+            animation: slideIn 0.5s ease-out;
+        }
+
+        @media (max-width: 600px) {
+            .login-container {
+                padding: 30px 20px;
+                margin: 10px;
+            }
+        }
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .logo {
+            text-align: center;
+            margin-bottom: 35px;
+            position: relative;
+        }
+        
+        .logo h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 32px;
+            background: linear-gradient(135deg, #6366f1, #8b5cf6, #ec4899);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 900;
+            text-shadow: 0 0 30px rgba(99, 102, 241, 0.5);
+            margin-bottom: 8px;
+            letter-spacing: 2px;
+        }
+        
+        .logo p {
+            color: #94a3b8;
+            font-size: 14px;
+            font-weight: 300;
+        }
+        
+        .subtitle {
+            text-align: center;
+            color: #64748b;
+            font-size: 12px;
+            margin-top: 8px;
+            font-style: italic;
+        }
+        
+        .tab-buttons {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+        
+        .tab-btn {
+            padding: 14px 10px;
+            background: rgba(30, 30, 50, 0.6);
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            border-radius: 12px;
+            color: #94a3b8;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-weight: 500;
+            font-size: 13px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .tab-btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(99, 102, 241, 0.2);
+            transform: translate(-50%, -50%);
+            transition: width 0.5s, height 0.5s;
+        }
+        
+        .tab-btn:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+        
+        .tab-btn.active {
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            color: white;
+            border-color: transparent;
+            box-shadow: 0 4px 20px rgba(99, 102, 241, 0.4);
+            transform: translateY(-2px);
+        }
+        
+        .form-group {
+            margin-bottom: 22px;
+            position: relative;
+        }
+        
+        .form-group label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: #cbd5e1;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .input-wrapper {
+            position: relative;
+        }
+        
+        .input-icon {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 18px;
+            color: #6366f1;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 14px 15px 14px 45px;
+            background: rgba(15, 15, 35, 0.7);
+            border: 2px solid rgba(99, 102, 241, 0.3);
+            border-radius: 12px;
+            color: #e2e8f0;
+            font-size: 14px;
+            transition: all 0.3s;
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        .form-group input:focus {
+            outline: none;
+            border-color: #6366f1;
+            background: rgba(15, 15, 35, 0.9);
+            box-shadow: 0 0 20px rgba(99, 102, 241, 0.3);
+        }
+        
+        .form-group input::placeholder {
+            color: #475569;
+        }
+        
+        .btn-submit {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #6366f1, #8b5cf6, #d946ef);
+            border: none;
+            border-radius: 12px;
+            color: white;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 4px 20px rgba(99, 102, 241, 0.4);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn-submit::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+        
+        .btn-submit:hover::before {
+            left: 100%;
+        }
+        
+        .btn-submit:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 30px rgba(99, 102, 241, 0.6);
+        }
+        
+        .btn-submit:active {
+            transform: translateY(-1px);
+        }
+        
+        .btn-submit:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .message {
+            margin-top: 20px;
+            padding: 14px;
+            border-radius: 12px;
+            font-size: 13px;
+            text-align: center;
+            display: none;
+            animation: messageSlide 0.3s ease-out;
+        }
+        
+        @keyframes messageSlide {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .message.success {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(5, 150, 105, 0.2));
+            color: #10b981;
+            border: 2px solid rgba(16, 185, 129, 0.4);
+            box-shadow: 0 0 20px rgba(16, 185, 129, 0.2);
+        }
+        
+        .message.error {
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.2), rgba(220, 38, 38, 0.2));
+            color: #ef4444;
+            border: 2px solid rgba(239, 68, 68, 0.4);
+            box-shadow: 0 0 20px rgba(239, 68, 68, 0.2);
+        }
+        
+        .message.warning {
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.2), rgba(217, 119, 6, 0.2));
+            color: #f59e0b;
+            border: 2px solid rgba(245, 158, 11, 0.4);
+            box-shadow: 0 0 20px rgba(245, 158, 11, 0.2);
+        }
+        
+        .form-section {
+            display: none;
+        }
+        
+        .form-section.active {
+            display: block;
+            animation: fadeIn 0.3s ease-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .help-section {
+            margin-top: 25px;
+            padding: 20px;
+            background: rgba(30, 30, 50, 0.5);
+            border: 1px solid rgba(99, 102, 241, 0.2);
+            border-radius: 12px;
+        }
+        
+        .help-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #cbd5e1;
+            margin-bottom: 12px;
+            text-align: center;
+        }
+        
+        .help-links {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        .help-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 16px;
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(139, 92, 246, 0.2));
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            border-radius: 8px;
+            color: #a5b4fc;
+            text-decoration: none;
+            font-size: 12px;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+        
+        .help-link:hover {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.4), rgba(139, 92, 246, 0.4));
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+        }
+        
+        .keyauth-info {
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(245, 158, 11, 0.1);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            border-radius: 10px;
+            font-size: 12px;
+            color: #fbbf24;
+            line-height: 1.6;
+        }
+        
+        .keyauth-info strong {
+            color: #f59e0b;
+        }
+        
+        .footer {
+            margin-top: 25px;
+            text-align: center;
+            font-size: 11px;
+            color: #64748b;
+        }
+        
+        .footer a {
+            color: #8b5cf6;
+            text-decoration: none;
+        }
+        
+        .footer a:hover {
+            text-decoration: underline;
+        }
+        
+        .loading-spinner {
+            display: none;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin: 0 auto;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .btn-submit.loading .loading-spinner {
+            display: block;
+        }
+        
+        .btn-submit.loading span {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="particles" id="particles"></div>
+    
+    <div class="login-container">
+        <div class="logo">
+            <h1>🔐 DELTA RARE</h1>
+            <p>Advanced Authentication System</p>
+            <p class="subtitle">Powered by KeyAuth Security</p>
+        </div>
+        
+        <div class="tab-buttons" style="grid-template-columns: repeat(4, 1fr);">
+            <button class="tab-btn active" onclick="showTab('login')">
+                👤 Login
+            </button>
+            <button class="tab-btn" onclick="showTab('admin')">
+                👑 Admin
+            </button>
+            <button class="tab-btn" onclick="showTab('register')">
+                ✨ Register
+            </button>
+            <button class="tab-btn" onclick="showTab('license')">
+                🔑 License
+            </button>
+        </div>
+        
+        <!-- Login Form -->
+        <div id="loginForm" class="form-section active">
+            <div class="form-group">
+                <label>👤 Username</label>
+                <div class="input-wrapper">
+                    <span class="input-icon">👤</span>
+                    <input type="text" id="loginUsername" placeholder="Enter your username">
+                </div>
+            </div>
+            <div class="form-group">
+                <label>🔒 Password</label>
+                <div class="input-wrapper">
+                    <span class="input-icon">🔒</span>
+                    <input type="password" id="loginPassword" placeholder="Enter your password">
+                </div>
+            </div>
+            <button class="btn-submit" onclick="handleLogin()">
+                <span>🚀 Login Now</span>
+                <div class="loading-spinner"></div>
+            </button>
+        </div>
+        
+        <!-- Register Form -->
+        <div id="registerForm" class="form-section">
+            <div class="form-group">
+                <label>👤 Choose Username</label>
+                <div class="input-wrapper">
+                    <span class="input-icon">👤</span>
+                    <input type="text" id="registerUsername" placeholder="Create unique username">
+                </div>
+            </div>
+            <div class="form-group">
+                <label>🔒 Choose Password</label>
+                <div class="input-wrapper">
+                    <span class="input-icon">🔒</span>
+                    <input type="password" id="registerPassword" placeholder="Create strong password">
+                </div>
+            </div>
+            <div class="form-group">
+                <label>🎟️ License Key</label>
+                <div class="input-wrapper">
+                    <span class="input-icon">🎟️</span>
+                    <input type="text" id="registerLicense" placeholder="Enter your license key">
+                </div>
+            </div>
+            <button class="btn-submit" onclick="handleRegister()">
+                <span>✨ Create Account</span>
+                <div class="loading-spinner"></div>
+            </button>
+        </div>
+        
+        <!-- Admin Form -->
+        <div id="adminForm" class="form-section">
+            <div class="form-group">
+                <label>👑 Admin Password</label>
+                <div class="input-wrapper">
+                    <span class="input-icon">🔑</span>
+                    <input type="password" id="adminPassword" placeholder="Enter admin password">
+                </div>
+            </div>
+            <button class="btn-submit" onclick="handleAdminLogin()">
+                <span>👑 Admin Login</span>
+                <div class="loading-spinner"></div>
+            </button>
+        </div>
+        
+        <!-- License Form -->
+        <div id="licenseForm" class="form-section">
+            <div class="form-group">
+                <label>🔑 License Key</label>
+                <div class="input-wrapper">
+                    <span class="input-icon">🔑</span>
+                    <input type="text" id="licenseKey" placeholder="Paste your license key here">
+                </div>
+            </div>
+            <button class="btn-submit" onclick="handleLicense()">
+                <span>🔓 Validate License</span>
+                <div class="loading-spinner"></div>
+            </button>
+        </div>
+        
+        <div id="message" class="message"></div>
+        
+        <!-- KeyAuth Info -->
+        <div class="keyauth-info" style="background: rgba(99, 102, 241, 0.1); border-color: rgba(99, 102, 241, 0.3);">
+            <strong style="color: #a5b4fc;">💡 Account Setup:</strong><br>
+            <span style="color: #cbd5e1;">
+            1. <a href="https://keyauth.cc/app/" target="_blank" style="color: #6366f1; text-decoration: underline;">KeyAuth Dashboard</a> থেকে License key নিন<br>
+            2. Register করুন নতুন account এর জন্য<br>
+            3. তারপর username/password দিয়ে login করুন
+            </span>
+        </div>
+        
+        <!-- Help Section -->
+        <div class="help-section">
+            <div class="help-title">💬 Need Help?</div>
+            <div class="help-links">
+                <a href="https://discord.gg/yourserver" target="_blank" class="help-link">
+                    <span>💬</span> Discord Support
+                </a>
+                <a href="https://keyauth.cc/app/" target="_blank" class="help-link">
+                    <span>🔑</span> KeyAuth Dashboard
+                </a>
+                <a href="https://t.me/yourtelegram" target="_blank" class="help-link">
+                    <span>📱</span> Telegram
+                </a>
+            </div>
+        </div>
+        
+        <div class="footer">
+            Made with ❤️ by <a href="#">Delta Rare Exe</a><br>
+            © 2025 All Rights Reserved
+        </div>
+    </div>
+    
+    <script>
+        // Generate consistent HWID based on browser fingerprint only
+        // Same browser will ALWAYS generate the same HWID
+        function generateHWID() {
+            // Create a fingerprint from stable browser characteristics
+            const fingerprint = [
+                navigator.userAgent,
+                navigator.language,
+                screen.width + 'x' + screen.height,
+                screen.colorDepth,
+                new Date().getTimezoneOffset(),
+                navigator.hardwareConcurrency || 'unknown',
+                navigator.platform,
+                navigator.maxTouchPoints || 0,
+                navigator.deviceMemory || 'unknown'
+            ].join('|');
+            
+            // Create multiple hashes for a longer, more unique HWID
+            function hashString(str, seed = 0) {
+                let h1 = 0xdeadbeef ^ seed, h2 = 0x41c6ce57 ^ seed;
+                for (let i = 0; i < str.length; i++) {
+                    const ch = str.charCodeAt(i);
+                    h1 = Math.imul(h1 ^ ch, 2654435761);
+                    h2 = Math.imul(h2 ^ ch, 1597334677);
+                }
+                h1 = Math.imul(h1 ^ (h1 >>> 16), 2246822507);
+                h1 ^= Math.imul(h2 ^ (h2 >>> 13), 3266489909);
+                h2 = Math.imul(h2 ^ (h2 >>> 16), 2246822507);
+                h2 ^= Math.imul(h1 ^ (h1 >>> 13), 3266489909);
+                return (h2 >>> 0).toString(16).padStart(8, '0') + (h1 >>> 0).toString(16).padStart(8, '0');
+            }
+            
+            // Generate consistent hash parts from fingerprint
+            const hash1 = hashString(fingerprint, 1);
+            const hash2 = hashString(fingerprint, 2);
+            const hash3 = hashString(fingerprint, 3);
+            
+            // Format as UUID-like string (consistent for same browser)
+            const hwid = `${hash1.substring(0, 8)}-${hash1.substring(8, 12)}-${hash2.substring(0, 4)}-${hash2.substring(4, 8)}-${hash3.substring(0, 12)}`;
+            
+            console.log('[Delta] Generated HWID from fingerprint:', hwid);
+            return hwid;
+        }
+        
+        // Get or generate HWID
+        const DEVICE_HWID = generateHWID();
+        console.log('[Delta] Using HWID:', DEVICE_HWID);
+        
+        // Create animated particles
+        function createParticles() {
+            const container = document.getElementById('particles');
+            for (let i = 0; i < 50; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.width = Math.random() * 5 + 2 + 'px';
+                particle.style.height = particle.style.width;
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 20 + 's';
+                particle.style.animationDuration = (Math.random() * 10 + 10) + 's';
+                container.appendChild(particle);
+            }
+        }
+        
+        createParticles();
+        
+        function showTab(tab) {
+            document.querySelectorAll('.form-section').forEach(f => f.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            
+            if (tab === 'login') {
+                document.getElementById('loginForm').classList.add('active');
+                document.querySelectorAll('.tab-btn')[0].classList.add('active');
+            } else if (tab === 'admin') {
+                document.getElementById('adminForm').classList.add('active');
+                document.querySelectorAll('.tab-btn')[1].classList.add('active');
+            } else if (tab === 'register') {
+                document.getElementById('registerForm').classList.add('active');
+                document.querySelectorAll('.tab-btn')[2].classList.add('active');
+            } else if (tab === 'license') {
+                document.getElementById('licenseForm').classList.add('active');
+                document.querySelectorAll('.tab-btn')[3].classList.add('active');
+            }
+            
+            hideMessage();
+        }
+        
+        function showMessage(type, text) {
+            const msg = document.getElementById('message');
+            msg.className = 'message ' + type;
+            msg.textContent = text;
+            msg.style.display = 'block';
+        }
+        
+        function hideMessage() {
+            const msg = document.getElementById('message');
+            msg.style.display = 'none';
+        }
+        
+        function setLoading(btnElement, isLoading) {
+            if (isLoading) {
+                btnElement.classList.add('loading');
+                btnElement.disabled = true;
+            } else {
+                btnElement.classList.remove('loading');
+                btnElement.disabled = false;
+            }
+        }
+        
+        async function handleLogin() {
+            const username = document.getElementById('loginUsername').value.trim();
+            const password = document.getElementById('loginPassword').value.trim();
+            const btn = event.target;
+            
+            if (!username || !password) {
+                showMessage('error', '❌ Username এবং Password উভয়ই প্রয়োজন!');
+                return;
+            }
+            
+            setLoading(btn, true);
+            hideMessage();
+            
+            try {
+                const response = await fetch('/keyauth/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password, hwid: DEVICE_HWID })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    showMessage('success', '✅ Login সফল! Redirecting...');
+                    setTimeout(() => window.location.href = '/', 1500);
+                } else {
+                    showMessage('error', '❌ ' + data.message);
+                }
+            } catch (e) {
+                showMessage('error', '❌ Connection Error: ' + e.message);
+            } finally {
+                setLoading(btn, false);
+            }
+        }
+        
+        async function handleRegister() {
+            const username = document.getElementById('registerUsername').value.trim();
+            const password = document.getElementById('registerPassword').value.trim();
+            const license = document.getElementById('registerLicense').value.trim();
+            const btn = event.target;
+            
+            if (!username || !password || !license) {
+                showMessage('error', '❌ সব field পূরণ করুন!');
+                return;
+            }
+            
+            if (username.length < 3) {
+                showMessage('error', '❌ Username কমপক্ষে 3 অক্ষর হতে হবে!');
+                return;
+            }
+            
+            if (password.length < 6) {
+                showMessage('error', '❌ Password কমপক্ষে 6 অক্ষর হতে হবে!');
+                return;
+            }
+            
+            setLoading(btn, true);
+            hideMessage();
+            
+            try {
+                const response = await fetch('/keyauth/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password, license, hwid: DEVICE_HWID })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    showMessage('success', '✅ Registration সফল! Login করুন...');
+                    setTimeout(() => showTab('login'), 2000);
+                } else {
+                    showMessage('error', '❌ ' + data.message);
+                }
+            } catch (e) {
+                showMessage('error', '❌ Connection Error: ' + e.message);
+            } finally {
+                setLoading(btn, false);
+            }
+        }
+        
+        async function handleLicense() {
+            const license = document.getElementById('licenseKey').value.trim();
+            const btn = event.target;
+            
+            if (!license) {
+                showMessage('error', '❌ License Key দিন!');
+                return;
+            }
+            
+            setLoading(btn, true);
+            hideMessage();
+            
+            try {
+                const response = await fetch('/keyauth/license', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ license, hwid: DEVICE_HWID })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    showMessage('success', '✅ License Validated! Redirecting...');
+                    setTimeout(() => window.location.href = '/', 1500);
+                } else {
+                    showMessage('error', '❌ ' + data.message);
+                }
+            } catch (e) {
+                showMessage('error', '❌ Connection Error: ' + e.message);
+            } finally {
+                setLoading(btn, false);
+            }
+        }
+        
+        async function handleAdminLogin() {
+            const password = document.getElementById('adminPassword').value.trim();
+            const btn = event.target;
+            
+            if (!password) {
+                showMessage('error', '❌ Admin Password required!');
+                return;
+            }
+            
+            setLoading(btn, true);
+            hideMessage();
+            
+            try {
+                const response = await fetch('/admin/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ password })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    showMessage('success', '✅ Admin Login Successful! Redirecting...');
+                    setTimeout(() => window.location.href = '/', 1500);
+                } else {
+                    showMessage('error', '❌ ' + data.message);
+                }
+            } catch (e) {
+                showMessage('error', '❌ Connection Error: ' + e.message);
+            } finally {
+                setLoading(btn, false);
+            }
+        }
+        
+        // Enter key support
+        document.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                const activeForm = document.querySelector('.form-section.active');
+                if (activeForm.id === 'loginForm') handleLogin();
+                else if (activeForm.id === 'adminForm') handleAdminLogin();
+                else if (activeForm.id === 'registerForm') handleRegister();
+                else if (activeForm.id === 'licenseForm') handleLicense();
+            }
+        });
+    </script>
+</body>
+</html>
