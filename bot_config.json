@@ -1,0 +1,10 @@
+{
+    "venv_path": "/storage/emulated/0/dre/venv",
+    "python_path": "python3",
+    "auto_restart": true,
+    "restart_delay": 10,
+    "log_file": "bot_combined.log",
+    "web_port": 5000,
+    "web_host": "0.0.0.0",
+    "install_deps": true
+}

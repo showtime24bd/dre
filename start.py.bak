@@ -1,0 +1,207 @@
+#!/usr/bin/env python3
+"""
+Delta Rare Exe - Free Fire Emote Bot
+Startup Script: Installs dependencies from requirements.txt and runs main.py & web_server.py
+"""
+
+import subprocess
+import sys
+import os
+import time
+from threading import Thread
+
+PACKAGE_IMPORT_MAP = {
+    'aiohttp': 'aiohttp',
+    'cfonts': 'cfonts',
+    'httpx': 'httpx',
+    'protobuf': 'google.protobuf',
+    'protobuf-decoder': 'protobuf_decoder',
+    'psutil': 'psutil',
+    'pycryptodome': 'Crypto',
+    'pyjwt': 'jwt',
+    'python-telegram-bot': 'telegram.ext',
+    'pytz': 'pytz',
+    'requests': 'requests',
+    'urllib3': 'urllib3',
+    'flask': 'flask',
+    'flask-cors': 'flask_cors',
+    'crypto': 'Crypto',
+    'python-cfonts': 'cfonts',
+    'telegram': 'telegram',
+}
+
+
+def get_missing_packages():
+    """Check which packages from requirements.txt are missing"""
+    missing = []
+    for pkg_name, import_name in PACKAGE_IMPORT_MAP.items():
+        try:
+            __import__(import_name)
+        except ImportError:
+            missing.append(pkg_name)
+    return missing
+
+
+def install_dependencies():
+    """Install all dependencies from requirements.txt"""
+    print("📦 Installing dependencies from requirements.txt...")
+    
+    requirements_file = os.path.join(os.path.dirname(__file__), 'requirements.txt')
+    
+    if not os.path.exists(requirements_file):
+        print("⚠️ requirements.txt not found!")
+        return False
+    
+    missing_before = get_missing_packages()
+    
+    if missing_before:
+        print(f"📥 Missing packages: {missing_before}")
+    
+    print("🔄 Running pip install -r requirements.txt...")
+    
+    try:
+        result = subprocess.run(
+            [sys.executable, '-m', 'pip', 'install', '-r', requirements_file,
+             '--disable-pip-version-check'],
+            capture_output=True,
+            text=True,
+            timeout=300
+        )
+        
+        if result.returncode != 0:
+            print("⚠️ Standard pip install failed, trying with --user flag...")
+            result = subprocess.run(
+                [sys.executable, '-m', 'pip', 'install', '-r', requirements_file,
+                 '--user', '--disable-pip-version-check'],
+                capture_output=True,
+                text=True,
+                timeout=300
+            )
+            
+            if result.returncode != 0:
+                print("⚠️ pip install with --user also failed")
+                if result.stderr:
+                    print(f"Error details: {result.stderr[:500]}")
+                    
+    except subprocess.TimeoutExpired:
+        print("⚠️ pip install timed out")
+    except Exception as e:
+        print(f"⚠️ pip install error: {e}")
+    
+    missing_after = get_missing_packages()
+    
+    if missing_after:
+        print(f"\n❌ Still missing packages: {missing_after}")
+        print("=" * 50)
+        print("Please install manually:")
+        print(f"  pip install {' '.join(missing_after)}")
+        print("=" * 50)
+        
+        critical = ['flask', 'requests', 'aiohttp', 'pycryptodome']
+        critical_missing = [p for p in missing_after if p in critical]
+        
+        if critical_missing:
+            print(f"\n❌ Critical packages missing: {critical_missing}")
+            print("Cannot start without these packages!")
+            return False
+        
+        print("\n⚠️ Some optional packages missing, continuing anyway...")
+        return True
+    
+    print("✅ All dependencies installed successfully!")
+    return True
+
+
+def run_main_bot():
+    """Run main.py (Core Free Fire Bot)"""
+    main_file = os.path.join(os.path.dirname(__file__), 'main.py')
+    
+    if not os.path.exists(main_file):
+        print("❌ main.py not found!")
+        return
+    
+    print("🤖 Starting Main Bot (main.py)...")
+    
+    try:
+        process = subprocess.Popen(
+            [sys.executable, main_file],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+            text=True,
+            bufsize=1
+        )
+        
+        for line in iter(process.stdout.readline, ''):
+            print(f"[MAIN] {line}", end='')
+            
+    except Exception as e:
+        print(f"❌ Error running main.py: {e}")
+
+
+def run_web_server():
+    """Run web_server.py (Flask Web Control Panel)"""
+    web_file = os.path.join(os.path.dirname(__file__), 'web_server.py')
+    
+    if not os.path.exists(web_file):
+        print("❌ web_server.py not found!")
+        return
+    
+    print("🌐 Starting Web Server on port 5000...")
+    
+    try:
+        process = subprocess.Popen(
+            [sys.executable, web_file],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+            text=True,
+            bufsize=1
+        )
+        
+        for line in iter(process.stdout.readline, ''):
+            print(f"[WEB] {line}", end='')
+            
+    except Exception as e:
+        print(f"❌ Error running web_server.py: {e}")
+
+
+def main():
+    """Main startup function"""
+    print("=" * 55)
+    print("  🔥 DELTA RARE EXE - FREE FIRE EMOTE BOT 🔥")
+    print("=" * 55)
+    
+    deps_ok = install_dependencies()
+    
+    if not deps_ok:
+        print("\n❌ Cannot start: Critical dependencies missing!")
+        print("Fix the issues above and try again.")
+        sys.exit(1)
+    
+    print("\n🚀 STARTING BOT SERVICES...")
+    print("-" * 40)
+    
+    web_thread = Thread(target=run_web_server, daemon=True)
+    main_thread = Thread(target=run_main_bot, daemon=True)
+    
+    web_thread.start()
+    time.sleep(1)
+    main_thread.start()
+    
+    print("-" * 40)
+    print("✅ Services Starting...")
+    print("🌐 Web Panel: http://0.0.0.0:5000")
+    print("-" * 40)
+    
+    try:
+        while True:
+            time.sleep(1)
+            if not main_thread.is_alive() and not web_thread.is_alive():
+                print("⚠️ Services stopped!")
+                break
+    except KeyboardInterrupt:
+        print("\n🛑 Shutting down...")
+        sys.exit(0)
+
+
+if __name__ == '__main__':
+    main()

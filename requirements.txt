@@ -1,0 +1,17 @@
+aiohttp
+cfonts
+httpx
+protobuf
+protobuf-decoder
+psutil
+pycryptodome
+pyjwt
+python-telegram-bot
+pytz
+requests
+urllib3
+flask
+flask-cors
+crypto
+python-cfonts
+telegram
